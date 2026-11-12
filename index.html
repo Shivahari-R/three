@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>three.js — Installation</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <aside class="sidebar">
+    <header class="side-header">
+      <a class="brand" href="#top">three.js</a>
+      <nav class="top-tabs" aria-label="Main navigation">
+        <a href="#docs">docs</a>
+        <a class="active" href="#manual">manual</a>
+      </nav>
+    </header>
+
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10.8" cy="10.8" r="6.5"></circle>
+        <path d="m16 16 5 5"></path>
+      </svg>
+      <input id="navSearch" type="search" aria-label="Search navigation" placeholder="">
+    </div>
+
+    <nav class="side-scroll" id="sideNav">
+      <div class="nav-group">
+        <h3>Getting Started</h3>
+        <a class="selected" href="#installation">Installation</a>
+        <a href="#creating-a-scene">Creating a Scene</a>
+        <a href="#creating-text">Creating Text</a>
+        <a href="#drawing-lines">Drawing Lines</a>
+        <a href="#faq">FAQ</a>
+        <a href="#libraries">Libraries and Plugins</a>
+        <a href="#loading-models">Loading 3D Models</a>
+        <a href="#uniform-types">Uniform Types</a>
+        <a href="#useful-links">Useful Links</a>
+        <a href="#webgl">WebGL Compatibility Check</a>
+      </div>
+      <div class="nav-group">
+        <h3>THREEJS Documentation</h3>
+        <a href="#raycaster">Raycaster</a>
+        <a href="#keypress-keydown">Keypress, Keydown</a>
+        <a href="#camera-control">Camera Control</a>
+        <a href="#player-control">Player Control</a>
+        <a href="#collision">Collision</a>
+        <a href="#healthbar">Healthbar</a>
+        <a href="#player-chase">Player Chase</a>
+        <a href="#start-screen">Start Screen</a>
+        <a href="#bucket-game">Bucket Game</a>
+        <a href="#coin-game">Coin Game</a>
+        <a href="#maze-game">Maze Game (example.js)</a>
+      </div>
+      <div class="nav-group">
+        <h3>Next Steps</h3>
+        <a href="#animation">Animation System</a>
+        <a href="#color">Color Management</a>
+        <a href="#vr">How to create VR content</a>
+        <a href="#dispose">How to dispose of Objects</a>
+        <a href="#update">How to update Things</a>
+        <a href="#post">How to use Post Processing</a>
+        <a href="#matrix">Matrix Transformations</a>
+      </div>
+      <div class="nav-group">
+        <h3>Basics</h3>
+        <a href="#fundamentals">Fundamentals</a>
+        <a href="#responsive">Responsive Design</a>
+        <a href="#prerequisites">Prerequisites</a>
+        <a href="#setup">Setup</a>
+      </div>
+      <div class="nav-group">
+        <h3>Advanced</h3>
+        <a href="#shaders">Shaders</a>
+        <a href="# postprocessing">Post Processing</a>
+        <a href="#performance">Performance</a>
+      </div>
+    </nav>
+  </aside>
+
+  <main class="document" id="top">
+    <article class="content">
+      <section id="installation">
+        <h1>Installation</h1>
+        <h2>Project structure</h2>
+        <p>Every three.js project needs at least one HTML file to define the webpage, and a JavaScript file to run your
+          three.js code. The structure and naming choices below aren't required, but will be used throughout this guide
+          for consistency.</p>
+        <ul class="file-list">
+          <li><em>index.html</em></li>
+        </ul>
+        <pre class="code-block"><code><span class="punct">&lt;!DOCTYPE html&gt;</span>
+<span class="punct">&lt;html</span> <span class="attr">lang</span>=<span class="string">"en"</span><span class="punct">&gt;</span>
+  <span class="punct">&lt;head&gt;</span>
+    <span class="punct">&lt;meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span><span class="punct">&gt;</span>
+    <span class="punct">&lt;title&gt;</span>My first three.js app<span class="punct">&lt;/title&gt;</span>
+    <span class="punct">&lt;style&gt;</span>
+      body { margin: 0; }
+
+      #crosshair {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: white;
+        font-size: 25px;
+        pointer-events: none;
+      }
+    <span class="punct">&lt;/style&gt;</span>
+  <span class="punct">&lt;/head&gt;</span>
+  <span class="punct">&lt;body&gt;</span>
+    <span class="comment">&lt;!-- Start Screen --&gt;</span>
+    <span class="punct">&lt;div</span> <span class="attr">id</span>=<span class="string">"startScreen"</span><span class="punct">&gt;</span>
+      <span class="punct">&lt;h4&gt;</span>Shooting Game<span class="punct">&lt;/h4&gt;</span>
+      <span class="punct">&lt;button</span> <span class="attr">onclick</span>=<span class="string">"startGame()"</span><span class="punct">&gt;</span>START<span class="punct">&lt;/button&gt;</span>
+    <span class="punct">&lt;/div&gt;</span>
+
+    <span class="comment">&lt;!-- Game Screen --&gt;</span>
+    <span class="punct">&lt;div</span> <span class="attr">id</span>=<span class="string">"gameScreen"</span> <span class="attr">style</span>=<span class="string">"display: none;"</span><span class="punct">&gt;</span>
+      <span class="punct">&lt;div</span> <span class="attr">id</span>=<span class="string">"score"</span><span class="punct">&gt;</span>Score: 0<span class="punct">&lt;/div&gt;</span>
+      <span class="punct">&lt;button</span> <span class="attr">onclick</span>=<span class="string">"restart()"</span><span class="punct">&gt;</span>Restart<span class="punct">&lt;/button&gt;</span>
+      <span class="punct">&lt;div</span> <span class="attr">id</span>=<span class="string">"crosshair"</span><span class="punct">&gt;</span>+<span class="punct">&lt;/div&gt;</span>
+    <span class="punct">&lt;/div&gt;</span>
+
+    <span class="punct">&lt;script</span> <span class="attr">type</span>=<span class="string">"module"</span> <span class="attr">src</span>=<span class="string">"/main.js"</span><span class="punct">&gt;&lt;/script&gt;</span>
+  <span class="punct">&lt;/body&gt;</span>
+<span class="punct">&lt;/html&gt;</span></code></pre>
+        <p class="below-code">Next, create a JavaScript file called <code>main.js</code> in the same folder.</p>
+        <ul class="file-list">
+          <li><em>main.js</em></li>
+        </ul>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">'three'</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );</code></pre>
+      </section>
+
+      <section class="later-section" id="setup">
+        <h2>Install and run</h2>
+        <p>Open a terminal in your project folder and install three.js and Vite, a development server that lets you run
+          your project locally.</p>
+        <pre class="code-block terminal"><code><span class="comment"># three.js</span>
+npm install --save three
+
+<span class="comment"># vite</span>
+npm install --save-dev vite</code></pre>
+        <details>
+          <summary>Installation added <em>node_modules/</em> and <em>package.json</em> to my project. What are they?
+          </summary>
+          <p>These files and folders are created by npm to manage the packages used by your project.</p>
+        </details>
+        <details>
+          <summary>Using three.js with TypeScript</summary>
+          <p>Three.js can also be used in TypeScript projects.</p>
+        </details>
+        <ol start="3">
+          <li>From your terminal, run:</li>
+        </ol>
+        <pre class="code-block terminal"><code>npx vite</code></pre>
+        <details>
+          <summary>What is <em>npx</em>?</summary>
+          <p>npx runs packages from the npm ecosystem without requiring a global installation.</p>
+        </details>
+        <ol start="4">
+          <li>If everything went well, you'll see a URL like <em>http://localhost:5173</em> appear in your terminal, and
+            can open that URL to see your web application.</li>
+        </ol>
+        <p>The page will be blank — you're ready to <a href="#creating-a-scene">create a scene</a>.</p>
+        <p>If you want to learn more about these tools before you continue, see:</p>
+        <ul>
+          <li><a href="#useful-links">three.js journey: Local Server</a></li>
+          <li><a href="#useful-links">Vite: Command Line Interface</a></li>
+          <li><a href="#useful-links">MDN: Package management basics</a></li>
+        </ul>
+      </section>
+      <section class="doc-section" id="raycaster">
+        <h4>Raycaster</h4>
+        <pre class="code-block"><code>window.addEventListener(<span class="string">"click"</span>, (event) =&gt; {
+    hitSound.play();
+      mouse.x = 0;    ||    mouse.x=(event.clientX/window.innerWidth)*2-1;
+      mouse.y = 0;    ||    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+  <span class="kw">const</span> intersects = raycaster.intersectObjects(targets);
+<span class="kw">if</span> (intersects.length &gt; 0) {
+    <span class="kw">const</span> hitObject = intersects[0].object;
+    scene.remove(hitObject);
+    <span class="kw">const</span> index = targets.indexOf(hitObject);
+    targets.splice(index, 1);
+    score++;
+    document.getElementById(<span class="string">"scoreUI"</span>).innerText = <span class="string">"Score: "</span> + score;
+    <span class="comment">// NEW: Check if all targets are gone</span>
+    <span class="kw">if</span> (targets.length === 0) {
+        gameOver();
+    }</code></pre>
+      </section>
+      <section class="doc-section" id="keypress-keydown">
+        <h4>Keypress, Keydown</h4>
+        <pre class="code-block"><code><span class="kw">const</span> keys = {
+  w: <span class="kw">false</span>,
+  a: <span class="kw">false</span>,
+  s: <span class="kw">false</span>,
+  d: <span class="kw">false</span>,
+  arrowup: <span class="kw">false</span>,
+  arrowdown: <span class="kw">false</span>,
+};
+
+document.addEventListener(<span class="string">'keydown'</span>,(event) =&gt;{
+    <span class="kw">const</span> key=event.key.toLowerCase();
+    <span class="kw">if</span>(keys.hasOwnProperty(key)){
+        keys[key]=<span class="kw">true</span>;
+    }
+})
+
+document.addEventListener(<span class="string">'keyup'</span>,(event)=&gt;{
+    <span class="kw">const</span> key=event.key.toLowerCase();
+    <span class="kw">if</span>(keys.hasOwnProperty(key)){
+        keys[key]=<span class="kw">false</span>;
+    }
+})</code></pre>
+      </section>
+      <section class="doc-section" id="camera-control">
+        <h4>Camera Control</h4>
+        <pre class="code-block"><code><span class="kw">function</span> animate(time) {
+  <span class="kw">const</span> speed = 0.1;
+  <span class="kw">if</span> (keys.w) camera.position.z -= speed;
+  <span class="kw">if</span> (keys.s) camera.position.z += speed;
+  <span class="kw">if</span> (keys.a) camera.position.x -= speed;
+  <span class="kw">if</span> (keys.d) camera.position.x += speed;
+  renderer.render(scene, camera);
+}</code></pre>
+      </section>
+      <section class="doc-section" id="player-control">
+        <h4>Player Control</h4>
+        <pre class="code-block"><code><span class="kw">function</span> animate() {
+    requestAnimationFrame(animate); <span class="comment">// Standard JS: Tells the browser to call animate() on the next frame</span>
+    
+    <span class="comment">// Optional: Spin the objects slightly so you know it's working</span>
+    <span class="comment">// player.rotation.y += 0.01;</span>
+    <span class="comment">// enemy.rotation.y += 0.01;</span>
+    <span class="kw">if</span>(keys.ArrowUp) player.position.y +=movSpeed;
+    <span class="kw">if</span>(keys.ArrowDown) player.position.y -=movSpeed;
+    <span class="kw">if</span>(keys.ArrowRight) player.position.x +=movSpeed;
+    <span class="kw">if</span>(keys.ArrowLeft) player.position.x -=movSpeed;
+    renderer.render(scene, camera); <span class="comment">// Three.js: Draw the current state of the scene</span>
+}
+
+<span class="comment">// Start the loop</span>
+animate();</code></pre>
+      </section>
+      <section class="doc-section" id="collision">
+        <h4>Collision</h4>
+        <pre class="code-block"><code><span class="comment">// --- 3.5 COLLISION DETECTION SETUP ---</span>
+<span class="comment">// Create invisible bounding boxes that will wrap our meshes</span>
+<span class="kw">const</span> playerBox = <span class="kw">new</span> THREE.Box3();
+<span class="kw">const</span> enemyBox = <span class="kw">new</span> THREE.Box3();
+
+<span class="comment">// We need a flag to track if we are CURRENTLY touching. </span>
+<span class="comment">// Otherwise, the game will detect a collision 60 times a second and instantly kill the player.</span>
+<span class="kw">let</span> isColliding = <span class="kw">false</span>;
+
+
+<span class="kw">function</span> animate() {
+    playerBox.setFromObject(player);
+    enemyBox.setFromObject(enemy);
+
+    <span class="comment">// 2. Check if the two boxes overlap</span>
+    <span class="kw">if</span> (playerBox.intersectsBox(enemyBox)) {
+        <span class="comment">// If they overlap, and we weren't already colliding...</span>
+        <span class="kw">if</span> (!isColliding) {
+            console.log(<span class="string">"Collision detected!"</span>);
+            player.material.color.setHex(0xffffff); <span class="comment">// Turn player WHITE to prove it works</span>
+            isColliding = <span class="kw">true</span>;
+        }
+    } <span class="kw">else</span> {
+        <span class="comment">// If they don't overlap, reset everything</span>
+        <span class="kw">if</span> (isColliding) {
+            player.material.color.setHex(0x0000ff); <span class="comment">// Turn player back to BLUE</span>
+            isColliding = <span class="kw">false</span>;
+        }
+    }
+    renderer.render(scene, camera); <span class="comment">// Three.js: Draw the current state of the scene</span>
+}
+renderer.setAnimationLoop(animate);</code></pre>
+        <pre class="code-block"><code><span class="comment">// --- 3.5 COLLISION DETECTION SETUP ---</span>
+<span class="comment">// Create invisible bounding boxes that will wrap our meshes</span>
+<span class="kw">const</span> playerBox = <span class="kw">new</span> THREE.Box3();
+<span class="kw">const</span> enemyBox = <span class="kw">new</span> THREE.Box3();
+
+<span class="comment">// We need a flag to track if we are CURRENTLY touching. </span>
+<span class="comment">// Otherwise, the game will detect a collision 60 times a second and instantly kill the player.</span>
+<span class="kw">let</span> isColliding = <span class="kw">false</span>;
+
+<span class="comment">// --- 4. THE ANIMATION LOOP (Updated) ---</span>
+<span class="kw">function</span> animate() {
+    
+    <span class="comment">// ... [Your existing keyboard movement code] ...</span>
+
+    <span class="comment">// 1. Update the invisible bounding boxes to match the new positions of our cubes</span>
+    playerBox.setFromObject(player);
+    enemyBox.setFromObject(enemy);
+
+    <span class="comment">// 2. Check if the two boxes overlap</span>
+    <span class="kw">if</span> (playerBox.intersectsBox(enemyBox)) {
+        <span class="comment">// If they overlap, and we weren't already colliding...</span>
+        <span class="kw">if</span> (!isColliding) {
+            console.log(<span class="string">"Collision detected!"</span>);
+            player.material.color.setHex(0xffffff); <span class="comment">// Turn player WHITE to prove it works</span>
+            isColliding = <span class="kw">true</span>;
+        }
+    } <span class="kw">else</span> {
+        <span class="comment">// If they don't overlap, reset everything</span>
+        <span class="kw">if</span> (isColliding) {
+            player.material.color.setHex(0x0000ff); <span class="comment">// Turn player back to BLUE</span>
+            isColliding = <span class="kw">false</span>;
+        }
+    }
+    
+    renderer.render(scene, camera); 
+}
+renderer.setAnimationLoop(animate);</code></pre>
+      </section>
+      <section class="doc-section" id="healthbar">
+        <h4>Healthbar</h4>
+        <pre class="code-block"><code><span class="comment">// --- 4. GAME STATE SETUP ---</span>
+<span class="kw">let</span> playerHealth = 50;
+<span class="kw">let</span> isGameOver = <span class="kw">false</span>;
+
+<span class="comment">// Get references to our HTML elements</span>
+<span class="kw">const</span> healthTextElement = document.getElementById(<span class="string">'healthText'</span>);
+<span class="kw">const</span> gameOverScreenElement = document.getElementById(<span class="string">'gameOverScreen'</span>);
+
+<span class="comment">// --- 5. THE ANIMATION LOOP (Updated) ---</span>
+<span class="kw">function</span> animate() {
+    <span class="comment">// If the game is over, immediately exit the function so nothing moves or renders anymore</span>
+    <span class="kw">if</span> (isGameOver) <span class="kw">return</span>; 
+
+    requestAnimationFrame(animate); 
+    
+    <span class="comment">// ... [Your existing keyboard movement code] ...</span>
+
+    playerBox.setFromObject(player);
+    enemyBox.setFromObject(enemy);
+
+    <span class="kw">if</span> (playerBox.intersectsBox(enemyBox)) {
+        <span class="kw">if</span> (!isColliding) {
+            isColliding = <span class="kw">true</span>;
+            player.material.color.setHex(0xffffff); 
+            
+            <span class="comment">// REDUCE HEALTH AND UPDATE UI</span>
+            playerHealth -= 10;
+            healthTextElement.innerText = playerHealth;
+
+            <span class="comment">// CHECK FOR GAME OVER</span>
+            <span class="kw">if</span> (playerHealth &lt;= 0) {
+                isGameOver = <span class="kw">true</span>;
+                gameOverScreenElement.style.display = <span class="string">'block'</span>; <span class="comment">// Show the Game Over text</span>
+            }
+        }
+    } <span class="kw">else</span> {
+        <span class="kw">if</span> (isColliding) {
+            player.material.color.setHex(0x0000ff); 
+            isColliding = <span class="kw">false</span>;
+        }
+    }
+    
+    renderer.render(scene, camera); 
+}</code></pre>
+      </section>
+      <section class="doc-section" id="player-chase">
+        <h4>Player Chase</h4>
+        <pre class="code-block"><code><span class="comment">// --- ENEMY CHASE LOGIC ---</span>
+    <span class="kw">const</span> enemySpeed = 0.02; <span class="comment">// Must be slower than movSpeed (0.05) so you can escape!</span>
+
+    <span class="comment">// If enemy is to the left of player, move right. If right, move left.</span>
+    <span class="kw">if</span> (enemy.position.x &lt; player.position.x) enemy.position.x += enemySpeed;
+    <span class="kw">if</span> (enemy.position.x &gt; player.position.x) enemy.position.x -= enemySpeed;
+    
+    <span class="comment">// If enemy is below player, move up. If above, move down.</span>
+    <span class="kw">if</span> (enemy.position.y &lt; player.position.y) enemy.position.y += enemySpeed;
+    <span class="kw">if</span> (enemy.position.y &gt; player.position.y) enemy.position.y -= enemySpeed;</code></pre>
+      </section>
+      <section class="doc-section" id="start-screen">
+        <h4>Start Screen</h4>
+        <pre class="code-block"><code><span class="punct">&lt;!DOCTYPE html&gt;</span>
+<span class="punct">&lt;html</span> <span class="attr">lang</span>=<span class="string">"en"</span><span class="punct">&gt;</span>
+<span class="punct">&lt;head&gt;</span>
+    <span class="punct">&lt;meta</span> <span class="attr">charset</span>=<span class="string">"UTF-8"</span><span class="punct">&gt;</span>
+    <span class="punct">&lt;title&gt;</span>Start Game<span class="punct">&lt;/title&gt;</span>
+    <span class="punct">&lt;style&gt;</span>
+        <span class="comment">/* Center everything nicely */</span>
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background-color: #222222; 
+            margin: 0;
+        }
+        button {
+            padding: 20px 40px;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    <span class="punct">&lt;/style&gt;</span>
+<span class="punct">&lt;/head&gt;</span>
+<span class="punct">&lt;body&gt;</span>
+    <span class="comment">&lt;!-- When clicked, simply load the index.html file --&gt;</span>
+    <span class="punct">&lt;button</span> <span class="attr">onclick</span>=<span class="string">"window.location.href='index.html'"</span><span class="punct">&gt;</span>PLAY GAME<span class="punct">&lt;/button&gt;</span>
+<span class="punct">&lt;/body&gt;</span>
+<span class="punct">&lt;/html&gt;</span></code></pre>
+      </section>
+      <section class="doc-section" id="bucket-game">
+        <h1>Bucket Game</h1>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">'three'</span>;
+
+<span class="comment">// SCENE</span>
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+<span class="comment">// CAMERA</span>
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(
+    75,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    1000
+);
+camera.position.z = 10;
+camera.lookAt(0, 0, 0);
+
+<span class="comment">// RENDERER</span>
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="comment">// PLATFORM</span>
+<span class="kw">const</span> platformGeometry = <span class="kw">new</span> THREE.BoxGeometry(12, 0.5, 2);
+<span class="kw">const</span> platformMaterial = <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"grey"</span> });
+<span class="kw">const</span> platform = <span class="kw">new</span> THREE.Mesh(platformGeometry, platformMaterial);
+platform.position.y = -3;
+scene.add(platform);
+
+<span class="comment">// BUCKET</span>
+<span class="kw">const</span> bucketGeometry = <span class="kw">new</span> THREE.BoxGeometry(1.5, 0.5, 1);
+<span class="kw">const</span> bucketMaterial = <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"blue"</span> });
+<span class="kw">const</span> bucket = <span class="kw">new</span> THREE.Mesh(bucketGeometry, bucketMaterial);
+bucket.position.y = -2.5;
+scene.add(bucket);
+
+<span class="comment">// COLLISION SETUP - initialized once for performance</span>
+<span class="kw">const</span> bucketBox = <span class="kw">new</span> THREE.Box3();
+<span class="kw">const</span> sphereBox = <span class="kw">new</span> THREE.Box3();
+<span class="kw">const</span> platformBox = <span class="kw">new</span> THREE.Box3();
+
+<span class="comment">// VARIABLES</span>
+<span class="kw">let</span> score = 0;
+<span class="kw">let</span> velocity = 0;
+<span class="kw">let</span> gravity = 0.001;
+<span class="kw">let</span> gameRunning = <span class="kw">false</span>;
+<span class="kw">let</span> sphere = <span class="kw">null</span>;
+
+<span class="comment">// MEMORY LEAK FIX: Create geometry and material once to reuse</span>
+<span class="kw">const</span> sphereGeometry = <span class="kw">new</span> THREE.SphereGeometry(0.3, 16, 16);
+<span class="kw">const</span> sphereMaterial = <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"red"</span> });
+
+<span class="comment">// CREATE SPHERE</span>
+<span class="kw">function</span> createSphere() {
+    sphere = <span class="kw">new</span> THREE.Mesh(sphereGeometry, sphereMaterial);
+    sphere.position.set(Math.random() * 10 - 5, 4, 0);
+    velocity = 0;
+    scene.add(sphere);
+}
+
+<span class="comment">// START SCREEN</span>
+<span class="kw">const</span> start = document.querySelector(<span class="string">".start"</span>);
+<span class="kw">const</span> btn = document.getElementById(<span class="string">"startbtn"</span>);
+
+renderer.domElement.style.display = <span class="string">"none"</span>;
+
+btn.addEventListener(<span class="string">"click"</span>, <span class="kw">function</span>() {
+    start.style.display = <span class="string">"none"</span>;
+    renderer.domElement.style.display = <span class="string">"block"</span>;
+
+    score = 0;
+    gameRunning = <span class="kw">true</span>;
+    bucket.position.x = 0;
+
+    document.getElementById(<span class="string">"score"</span>).innerText = <span class="string">"Score: 0"</span>;
+    document.getElementById(<span class="string">"message"</span>).innerText = <span class="string">""</span>;
+
+    <span class="kw">if</span> (sphere) {
+        scene.remove(sphere);
+    }
+    createSphere();
+});
+
+<span class="comment">// BUCKET MOVEMENT</span>
+window.addEventListener(<span class="string">"keydown"</span>, <span class="kw">function</span>(event) {
+    <span class="kw">if</span> (!gameRunning) <span class="kw">return</span>;
+
+    <span class="kw">if</span> (event.key === <span class="string">"ArrowLeft"</span>) {
+        bucket.position.x -= 0.3;
+    }
+
+    <span class="kw">if</span> (event.key === <span class="string">"ArrowRight"</span>) {
+        bucket.position.x += 0.3;
+    }
+
+    bucket.position.x = THREE.MathUtils.clamp(bucket.position.x, -5, 5);
+});
+
+<span class="comment">// ANIMATION</span>
+<span class="kw">function</span> animate() {
+    <span class="kw">if</span> (gameRunning &amp;&amp; sphere) {
+        <span class="comment">// GRAVITY</span>
+        velocity += gravity;
+        sphere.position.y -= velocity;
+
+        <span class="comment">// UPDATE BOUNDING BOXES</span>
+        bucketBox.setFromObject(bucket);
+        sphereBox.setFromObject(sphere);
+        platformBox.setFromObject(platform);
+
+        <span class="comment">// BUCKET COLLISION</span>
+        <span class="kw">if</span> (bucketBox.intersectsBox(sphereBox)) {
+            scene.remove(sphere);
+            sphere = <span class="kw">null</span>;
+
+            score++;
+            document.getElementById(<span class="string">"score"</span>).innerText = <span class="string">"Score: "</span> + score;
+
+            createSphere();
+        }
+        <span class="comment">// GROUND COLLISION (Using Bounding Box)</span>
+        <span class="kw">else</span> <span class="kw">if</span> (platformBox.intersectsBox(sphereBox)) {
+            scene.remove(sphere);
+            sphere = <span class="kw">null</span>;
+
+            gameRunning = <span class="kw">false</span>;
+            document.getElementById(<span class="string">"message"</span>).innerText = <span class="string">"Missed! Game Over"</span>;
+            start.style.display = <span class="string">"block"</span>; <span class="comment">// Show start screen again to retry</span>
+        }
+    }
+
+    renderer.render(scene, camera);
+}
+
+<span class="comment">// START ANIMATION</span>
+renderer.setAnimationLoop(animate);</code></pre>
+      </section>
+      <section class="doc-section" id="coin-game">
+        <h1>Coin Game</h1>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">'three'</span>;
+
+<span class="comment">// 1. SCENE SETUP</span>
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"skyblue"</span>);
+
+<span class="comment">// Angle the camera down slightly to see depth (Z-axis)</span>
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 8, 15);
+camera.lookAt(0, 0, 0);
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="comment">// 2. LARGE PLATFORM (Width: 20, Height: 1, Depth: 20)</span>
+<span class="kw">const</span> platform = <span class="kw">new</span> THREE.Mesh(
+  <span class="kw">new</span> THREE.BoxGeometry(20, 1, 20),
+  <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"grey"</span> })
+);
+platform.position.y = -0.5; <span class="comment">// Top surface is exactly at Y = 0</span>
+scene.add(platform);
+
+<span class="comment">// 3. PLAYER CUBE</span>
+<span class="kw">const</span> player = <span class="kw">new</span> THREE.Mesh(
+  <span class="kw">new</span> THREE.BoxGeometry(1, 1, 1),
+  <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"red"</span> })
+);
+player.position.set(0, 0.5, 0); <span class="comment">// Resting exactly on top of the platform</span>
+scene.add(player);
+
+<span class="comment">// 4. MULTIPLE COINS</span>
+<span class="kw">const</span> coins = [];
+<span class="kw">const</span> coinGeo = <span class="kw">new</span> THREE.BoxGeometry(0.5, 0.5, 0.5);
+<span class="kw">const</span> coinMat = <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"yellow"</span> });
+
+<span class="comment">// Spawn 10 coins in random locations across the platform</span>
+<span class="kw">for</span> (<span class="kw">let</span> i = 0; i &lt; 10; i++) {
+  <span class="kw">const</span> coin = <span class="kw">new</span> THREE.Mesh(coinGeo, coinMat);
+  <span class="comment">// Random X and Z between -9 and 9</span>
+  <span class="kw">const</span> randomX = Math.random() * 18 - 9;
+  <span class="kw">const</span> randomZ = Math.random() * 18 - 9;
+  
+  coin.position.set(randomX, 0.5, randomZ);
+  scene.add(coin);
+  coins.push(coin);
+}
+
+<span class="comment">// 5. GAME VARIABLES &amp; PHYSICS</span>
+<span class="kw">const</span> keys = {};
+<span class="kw">let</span> yVelocity = 0;
+<span class="kw">let</span> isJumping = <span class="kw">false</span>;
+<span class="kw">const</span> gravity = -0.015;
+<span class="kw">let</span> score = 0;
+<span class="kw">let</span> gameRunning = <span class="kw">true</span>;
+
+<span class="kw">const</span> playerBox = <span class="kw">new</span> THREE.Box3();
+<span class="kw">const</span> coinBox = <span class="kw">new</span> THREE.Box3();
+
+<span class="comment">// 6. CONTROLS (X, Z, and Space for Jump)</span>
+window.addEventListener(<span class="string">"keydown"</span>, (e) =&gt; {
+  keys[e.code] = <span class="kw">true</span>;
+  
+  <span class="comment">// Jump on Spacebar</span>
+  <span class="kw">if</span> (e.code === <span class="string">"Space"</span> &amp;&amp; !isJumping &amp;&amp; gameRunning) {
+    yVelocity = 0.35; 
+    isJumping = <span class="kw">true</span>;
+  }
+});
+window.addEventListener(<span class="string">"keyup"</span>, (e) =&gt; keys[e.code] = <span class="kw">false</span>);
+
+<span class="comment">// 7. ANIMATION LOOP</span>
+<span class="kw">function</span> animate() {
+  <span class="kw">if</span> (gameRunning) {
+    
+    <span class="comment">// --- MOVEMENT (X and Z Axes) ---</span>
+    <span class="kw">if</span> (keys[<span class="string">"ArrowUp"</span>]) player.position.z -= 0.15;    <span class="comment">// Move Forward (Negative Z)</span>
+    <span class="kw">if</span> (keys[<span class="string">"ArrowDown"</span>]) player.position.z += 0.15;  <span class="comment">// Move Backward (Positive Z)</span>
+    <span class="kw">if</span> (keys[<span class="string">"ArrowLeft"</span>]) player.position.x -= 0.15;  <span class="comment">// Move Left (Negative X)</span>
+    <span class="kw">if</span> (keys[<span class="string">"ArrowRight"</span>]) player.position.x += 0.15; <span class="comment">// Move Right (Positive X)</span>
+
+    <span class="comment">// --- JUMPING / GRAVITY (Y Axis) ---</span>
+    yVelocity += gravity;
+    player.position.y += yVelocity;
+
+    <span class="comment">// --- PLATFORM COLLISION ---</span>
+    <span class="comment">// Check if player is within the platform's X and Z bounds</span>
+    <span class="kw">const</span> onPlatformX = player.position.x &gt; -10.5 &amp;&amp; player.position.x &lt; 10.5;
+    <span class="kw">const</span> onPlatformZ = player.position.z &gt; -10.5 &amp;&amp; player.position.z &lt; 10.5;
+
+    <span class="comment">// If over the platform and hitting the surface (Y &lt;= 0.5)</span>
+    <span class="kw">if</span> (onPlatformX &amp;&amp; onPlatformZ &amp;&amp; player.position.y &lt;= 0.5) {
+      player.position.y = 0.5; <span class="comment">// Snap to surface</span>
+      yVelocity = 0;           <span class="comment">// Stop falling</span>
+      isJumping = <span class="kw">false</span>;       <span class="comment">// Allow jumping again</span>
+    }
+
+    <span class="comment">// --- FALLING / GAME OVER ---</span>
+    <span class="kw">if</span> (player.position.y &lt; -5) {
+      gameRunning = <span class="kw">false</span>;
+      document.getElementById(<span class="string">"gameOver"</span>).style.display = <span class="string">"block"</span>;
+    }
+
+    <span class="comment">// --- COIN COLLECTION ---</span>
+    playerBox.setFromObject(player);
+
+    <span class="comment">// Loop backwards through the array to safely remove collected coins</span>
+    <span class="kw">for</span> (<span class="kw">let</span> i = coins.length - 1; i &gt;= 0; i--) {
+      <span class="kw">const</span> currentCoin = coins[i];
+      
+      <span class="comment">// Spin the coins</span>
+      currentCoin.rotation.y += 0.05;
+      currentCoin.rotation.x += 0.05;
+
+      coinBox.setFromObject(currentCoin);
+
+      <span class="comment">// Check collision</span>
+      <span class="kw">if</span> (playerBox.intersectsBox(coinBox)) {
+        scene.remove(currentCoin); <span class="comment">// Remove from 3D scene</span>
+        coins.splice(i, 1);        <span class="comment">// Remove from our tracking array</span>
+        
+        score++;
+        document.getElementById(<span class="string">"score"</span>).innerText = <span class="string">"Score: "</span> + score;
+      }
+    }
+  }
+
+  renderer.render(scene, camera);
+}
+
+<span class="comment">// Start the loop</span>
+renderer.setAnimationLoop(animate);</code></pre>
+      </section>
+      <section class="doc-section" id="maze-game">
+        <h1>Maze Game</h1>
+        <ul class="file-list">
+          <li><em>example.js</em></li>
+        </ul>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+<span class="comment">// 1. Create scene</span>
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(0xe8e8e8);
+
+<span class="comment">// 2. Create camera</span>
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(
+    55,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    100
+);
+
+camera.position.set(0, 12, 10);
+camera.lookAt(0, 0, 0);
+
+<span class="comment">// 3. Create renderer</span>
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer();
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="comment">// 4. Add lights</span>
+<span class="kw">const</span> light = <span class="kw">new</span> THREE.DirectionalLight(0xffffff, 2);
+light.position.set(-5, 10, 5);
+scene.add(light);
+
+scene.add(<span class="kw">new</span> THREE.AmbientLight(0xffffff, 0.7));
+
+<span class="comment">// 5. Maze design</span>
+<span class="comment">// # = Wall, . = Path, S = Start, G = Goal</span>
+
+<span class="kw">const</span> maze = [
+    <span class="string">"#########"</span>,
+    <span class="string">"#S....#.#"</span>,
+    <span class="string">"#####.#.#"</span>,
+    <span class="string">"#...#.#.#"</span>,
+    <span class="string">"#.#.#.#.#"</span>,
+    <span class="string">"#.#...#.#"</span>,
+    <span class="string">"#.#.###.#"</span>,
+    <span class="string">"#......G#"</span>,
+    <span class="string">"#########"</span>
+];
+
+<span class="kw">const</span> cellSize = 1.2;
+<span class="kw">const</span> offset = (maze.length * cellSize) / 2;
+
+<span class="kw">const</span> walls = [];
+
+<span class="kw">let</span> startPosition = <span class="kw">new</span> THREE.Vector3();
+<span class="kw">let</span> goalPosition = <span class="kw">new</span> THREE.Vector3();
+
+<span class="comment">// 6. Create floor</span>
+<span class="kw">const</span> floor = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(maze[0].length * cellSize, 0.2, maze.length * cellSize),
+    <span class="kw">new</span> THREE.MeshStandardMaterial({ color: 0xcccccc })
+);
+
+floor.position.y = -0.1;
+scene.add(floor);
+
+<span class="comment">// 7. Create maze walls and goal</span>
+<span class="kw">for</span> (<span class="kw">let</span> row = 0; row &lt; maze.length; row++) {
+
+    <span class="kw">for</span> (<span class="kw">let</span> col = 0; col &lt; maze[row].length; col++) {
+
+        <span class="kw">const</span> x = col * cellSize - offset + cellSize / 2;
+        <span class="kw">const</span> z = row * cellSize - offset + cellSize / 2;
+
+        <span class="kw">const</span> cell = maze[row][col];
+
+        <span class="kw">if</span> (cell === <span class="string">"#"</span>) {
+
+            <span class="kw">const</span> wall = <span class="kw">new</span> THREE.Mesh(
+                <span class="kw">new</span> THREE.BoxGeometry(1.2, 0.8, 1.2),
+                <span class="kw">new</span> THREE.MeshStandardMaterial({ color: 0x555555 })
+            );
+
+            wall.position.set(x, 0.4, z);
+
+            scene.add(wall);
+            walls.push(wall);
+        }
+
+        <span class="kw">if</span> (cell === <span class="string">"S"</span>) {
+            startPosition.set(x, 0.35, z);
+        }
+
+        <span class="kw">if</span> (cell === <span class="string">"G"</span>) {
+
+            goalPosition.set(x, 0.02, z);
+
+            <span class="kw">const</span> goal = <span class="kw">new</span> THREE.Mesh(
+                <span class="kw">new</span> THREE.BoxGeometry(0.9, 0.04, 0.9),
+                <span class="kw">new</span> THREE.MeshStandardMaterial({ color: 0x00ff00 })
+            );
+
+            goal.position.copy(goalPosition);
+            scene.add(goal);
+        }
+    }
+}
+
+<span class="comment">// 8. Create player ball</span>
+<span class="kw">const</span> ball = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.SphereGeometry(0.32, 24, 24),
+    <span class="kw">new</span> THREE.MeshStandardMaterial({ color: 0xff0000 })
+);
+
+ball.position.copy(startPosition);
+scene.add(ball);
+
+<span class="comment">// 9. Keyboard controls</span>
+<span class="kw">const</span> keys = {};
+
+document.addEventListener(<span class="string">"keydown"</span>, (event) =&gt; {
+    keys[event.key.toLowerCase()] = <span class="kw">true</span>;
+});
+
+document.addEventListener(<span class="string">"keyup"</span>, (event) =&gt; {
+    keys[event.key.toLowerCase()] = <span class="kw">false</span>;
+});
+
+<span class="comment">// 10. Check wall collision</span>
+<span class="kw">function</span> hitsWall(position) {
+
+    <span class="kw">const</span> ballBox = <span class="kw">new</span> THREE.Box3().setFromCenterAndSize(
+        position,
+        <span class="kw">new</span> THREE.Vector3(0.64, 0.64, 0.64)
+    );
+
+    <span class="kw">for</span> (<span class="kw">const</span> wall <span class="kw">of</span> walls) {
+
+        <span class="kw">const</span> wallBox = <span class="kw">new</span> THREE.Box3().setFromObject(wall);
+
+        <span class="kw">if</span> (ballBox.intersectsBox(wallBox)) {
+            <span class="kw">return</span> <span class="kw">true</span>;
+        }
+    }
+
+    <span class="kw">return</span> <span class="kw">false</span>;
+}
+
+<span class="comment">// 11. Move ball</span>
+<span class="kw">let</span> wallHit = <span class="kw">false</span>;
+<span class="kw">let</span> levelComplete = <span class="kw">false</span>;
+
+<span class="kw">function</span> moveBall() {
+
+    <span class="kw">if</span> (levelComplete) <span class="kw">return</span>;
+
+    <span class="kw">const</span> speed = 0.06;
+
+    <span class="kw">const</span> oldPosition = ball.position.clone();
+
+    <span class="kw">if</span> (keys[<span class="string">"w"</span>] || keys[<span class="string">"arrowup"</span>])
+        ball.position.z -= speed;
+
+    <span class="kw">if</span> (keys[<span class="string">"s"</span>] || keys[<span class="string">"arrowdown"</span>])
+        ball.position.z += speed;
+
+    <span class="kw">if</span> (keys[<span class="string">"a"</span>] || keys[<span class="string">"arrowleft"</span>])
+        ball.position.x -= speed;
+
+    <span class="kw">if</span> (keys[<span class="string">"d"</span>] || keys[<span class="string">"arrowright"</span>])
+        ball.position.x += speed;
+
+    <span class="comment">// Check collision with walls</span>
+    <span class="kw">if</span> (hitsWall(ball.position)) {
+
+        ball.position.copy(oldPosition);
+
+        <span class="kw">if</span> (!wallHit) {
+            console.log(<span class="string">"Wall Hit"</span>);
+            wallHit = <span class="kw">true</span>;
+        }
+
+    } <span class="kw">else</span> {
+        wallHit = <span class="kw">false</span>;
+    }
+
+    <span class="comment">// Check goal</span>
+    <span class="kw">if</span> (ball.position.distanceTo(goalPosition) &lt; 0.55) {
+
+        levelComplete = <span class="kw">true</span>;
+
+        document.getElementById(<span class="string">"message"</span>).style.display = <span class="string">"block"</span>;
+    }
+}
+
+<span class="comment">// 12. Animation loop</span>
+<span class="kw">function</span> animate() {
+
+    requestAnimationFrame(animate);
+
+    moveBall();
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+<span class="comment">// 13. Window resize</span>
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});</code></pre>
+      </section>
+      <section class="placeholder-section" id="creating-a-scene">
+        <h1>Creating a Scene</h1>
+        <p>A scene is the container for all the objects, lights, and cameras in your three.js application.</p>
+      </section>
+      <section class="placeholder-section" id="creating-text">
+        <h1>Creating Text</h1>
+        <p>Use text geometry to add 3D text to a scene.</p>
+      </section>
+      <section class="placeholder-section" id="drawing-lines">
+        <h1>Drawing Lines</h1>
+        <p>Lines can be created from a series of points and rendered with a line material.</p>
+      </section>
+      <section class="placeholder-section" id="faq">
+        <h1>FAQ</h1>
+        <p>Frequently asked questions about working with three.js.</p>
+      </section>
+      <section class="placeholder-section" id="libraries">
+        <h1>Libraries and Plugins</h1>
+      </section>
+      <section class="placeholder-section" id="loading-models">
+        <h1>Loading 3D Models</h1>
+      </section>
+      <section class="placeholder-section" id="uniform-types">
+        <h1>Uniform Types</h1>
+      </section>
+      <section class="placeholder-section" id="useful-links">
+        <h1>Useful Links</h1>
+      </section>
+      <section class="placeholder-section" id="webgl">
+        <h1>WebGL Compatibility Check</h1>
+      </section>
+    </article>
+  </main>
+  <script src="main.js"></script>
+</body>
+
+</html>
