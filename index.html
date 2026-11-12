@@ -55,6 +55,21 @@
         <a href="#maze-game">Maze Game (example.js)</a>
       </div>
       <div class="nav-group">
+        <h3>Doc Documentation</h3>
+        <a href="#select-in-three-js">Select in Three JS</a>
+        <a href="#gravity">Gravity</a>
+        <a href="#creating-cube">Creating cube</a>
+        <a href="#doc-animation">Animation</a>
+        <a href="#light">Light</a>
+        <a href="#collection-camera">Collection camera</a>
+        <a href="#switch">Switch()</a>
+        <a href="#animation-action">Animation Action</a>
+        <a href="#webgl-follower">WebGL Follower</a>
+        <a href="#perspective-path-finder">Perspective path finder</a>
+        <a href="#2d-runner">2D runner</a>
+        <a href="#hidden">hidden</a>
+      </div>
+      <div class="nav-group">
         <h3>Next Steps</h3>
         <a href="#animation">Animation System</a>
         <a href="#color">Color Management</a>
@@ -417,7 +432,7 @@ renderer.setAnimationLoop(animate);</code></pre>
 <span class="punct">&lt;/html&gt;</span></code></pre>
       </section>
       <section class="doc-section" id="bucket-game">
-        <h1>Bucket Game</h1>
+        <h4>Bucket Game</h4>
         <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">'three'</span>;
 
 <span class="comment">// SCENE</span>
@@ -555,7 +570,7 @@ window.addEventListener(<span class="string">"keydown"</span>, <span class="kw">
 renderer.setAnimationLoop(animate);</code></pre>
       </section>
       <section class="doc-section" id="coin-game">
-        <h1>Coin Game</h1>
+        <h4>Coin Game</h4>
         <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">'three'</span>;
 
 <span class="comment">// 1. SCENE SETUP</span>
@@ -690,7 +705,7 @@ window.addEventListener(<span class="string">"keyup"</span>, (e) =&gt; keys[e.co
 renderer.setAnimationLoop(animate);</code></pre>
       </section>
       <section class="doc-section" id="maze-game">
-        <h1>Maze Game</h1>
+        <h4>Maze Game</h4>
         <ul class="file-list">
           <li><em>example.js</em></li>
         </ul>
@@ -904,6 +919,1499 @@ window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
     camera.updateProjectionMatrix();
 
     renderer.setSize(window.innerWidth, window.innerHeight);
+});</code></pre>
+      </section>
+      <section class="doc-section" id="select-in-three-js">
+        <h4>Select in Three JS</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">'three'</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background= <span class="kw">new</span> THREE.Color(0x87CEEB);
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setAnimationLoop( animate );
+document.body.appendChild( renderer.domElement );
+
+<span class="comment">//CUBES</span>
+<span class="kw">const</span> box1 = <span class="kw">new</span> THREE.BoxGeometry( 1, 1, 1 );
+<span class="kw">const</span> material = <span class="kw">new</span> THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+<span class="kw">const</span> cube1 = <span class="kw">new</span> THREE.Mesh( box1, material );
+scene.add( cube1 );
+
+<span class="kw">const</span> box2 = <span class="kw">new</span> THREE.BoxGeometry( 1, 1, 1 );
+<span class="kw">const</span> material2 = <span class="kw">new</span> THREE.MeshBasicMaterial( { color: 0xff0000 } );
+<span class="kw">const</span> cube2 = <span class="kw">new</span> THREE.Mesh( box2, material2 );
+scene.add( cube2 );
+
+<span class="kw">const</span> box3 = <span class="kw">new</span> THREE.BoxGeometry( 1, 1, 1 );
+<span class="kw">const</span> material3 = <span class="kw">new</span> THREE.MeshBasicMaterial( { color: 0x0000ff } );
+<span class="kw">const</span> cube3 = <span class="kw">new</span> THREE.Mesh( box3, material3 );
+scene.add( cube3 );
+
+<span class="kw">const</span> box4 = <span class="kw">new</span> THREE.BoxGeometry( 1, 1, 1 );
+<span class="kw">const</span> material4 = <span class="kw">new</span> THREE.MeshBasicMaterial( { color: 0xffff00 } );
+<span class="kw">const</span> cube4 = <span class="kw">new</span> THREE.Mesh( box4, material4 );
+scene.add( cube4 );
+
+<span class="comment">//RAYCASTER</span>
+<span class="kw">const</span> raycaster = <span class="kw">new</span> THREE.Raycaster();
+<span class="kw">const</span> mouse = <span class="kw">new</span> THREE.Vector2();
+<span class="kw">let</span> obj= <span class="kw">null</span>;
+<span class="kw">function</span> change(){
+    raycaster.setFromCamera(mouse,camera);
+    <span class="kw">const</span> hit = raycaster.intersectObjects([cube1,cube2,cube3,cube4]);
+    <span class="kw">if</span>(hit.length&gt;0){
+        obj= hit[0].object;
+        hit[0].object.material.color.set(0xffffff);
+    }
+}
+<span class="comment">//MOUSE EVENTS</span>
+document.addEventListener(<span class="string">'click'</span>, (event) =&gt; {
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    change();
+});
+
+<span class="kw">const</span> keys = {};
+
+document.addEventListener(<span class="string">"keydown"</span>, (event) =&gt; {
+  keys[event.key.toLowerCase()] = <span class="kw">true</span>;
+});
+
+document.addEventListener(<span class="string">"keyup"</span>, (event) =&gt; {
+  keys[event.key.toLowerCase()] = <span class="kw">false</span>;
+});
+<span class="kw">function</span> movePlayer() {
+  <span class="kw">const</span> moveSpeed = 0.1;
+
+  <span class="comment">// Forward and right directions based on the camera's current angle.</span>
+  <span class="kw">const</span> forward = <span class="kw">new</span> THREE.Vector3();
+  camera.getWorldDirection(forward);
+  forward.y = 0;
+  forward.normalize();
+
+  <span class="kw">const</span> right = <span class="kw">new</span> THREE.Vector3();
+  right.crossVectors(forward, camera.up).normalize();
+  <span class="kw">if</span> (keys[<span class="string">"w"</span>])
+        obj.position.z= obj.position.z - moveSpeed;
+  <span class="kw">if</span> (keys[<span class="string">"s"</span>]) obj.position.z= obj.position.z + moveSpeed;
+  <span class="kw">if</span> (keys[<span class="string">"d"</span>]) obj.position.x= obj.position.x + moveSpeed;
+  <span class="kw">if</span> (keys[<span class="string">"a"</span>]) obj.position.x= obj.position.x - moveSpeed;
+}
+<span class="comment">//POSITIONS</span>
+camera.position.z = 5;
+cube1.position.x = -2;
+cube2.position.x = 2;
+cube3.position.x = 0;
+cube4.position.x = 4;
+
+<span class="kw">function</span> animate( time ) {
+    movePlayer();
+  renderer.render( scene, camera );
+
+}</code></pre>
+      </section>
+      <section class="doc-section" id="gravity">
+        <h4>Gravity</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">'three'</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer();
+renderer.setSize( window.innerWidth, window.innerHeight );
+renderer.setAnimationLoop( animate );
+document.body.appendChild( renderer.domElement );
+
+<span class="kw">const</span> ball = <span class="kw">new</span> THREE.SphereGeometry( 0.2, 32, 16, 0, Math.PI * 2, 0, Math.PI );
+<span class="kw">const</span> material = <span class="kw">new</span> THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+<span class="kw">const</span> basketball = <span class="kw">new</span> THREE.Mesh( ball, material );
+scene.add( basketball );
+
+<span class="kw">const</span> poll = <span class="kw">new</span> THREE.PlaneGeometry(0.2,5);
+<span class="kw">const</span> material1= <span class="kw">new</span> THREE.MeshBasicMaterial({color: 0x0000ff});
+<span class="kw">const</span> polll= <span class="kw">new</span> THREE.Mesh(poll,material1)
+scene.add(polll)
+
+<span class="kw">const</span> ring = <span class="kw">new</span> THREE.PlaneGeometry(1,1);
+<span class="kw">const</span> material2= <span class="kw">new</span> THREE.MeshBasicMaterial({color: 0xffffff});
+<span class="kw">const</span> ringof= <span class="kw">new</span> THREE.Mesh(ring,material2)
+scene.add(ringof)
+
+<span class="kw">const</span> groundGeometry = <span class="kw">new</span> THREE.PlaneGeometry( 20,0.2);
+<span class="kw">const</span> material3 = <span class="kw">new</span> THREE.MeshBasicMaterial({ color: 0x808080 });
+<span class="kw">const</span> ground = <span class="kw">new</span> THREE.Mesh( groundGeometry, material3 );
+scene.add(ground);
+
+<span class="kw">let</span> keys = {};
+<span class="kw">let</span> movSpeed = 0.1;
+document.addEventListener(<span class="string">"keydown"</span>, (event) =&gt; {
+    keys[event.key] = <span class="kw">true</span>;
+});
+
+document.addEventListener(<span class="string">"keyup"</span>, (event) =&gt; {
+    keys[event.key] = <span class="kw">false</span>;
+});
+
+<span class="kw">let</span> playerSphere = <span class="kw">new</span> THREE.Sphere();
+<span class="kw">let</span> wallBox = <span class="kw">new</span> THREE.Box3();
+
+camera.position.z = 5;
+basketball.position.x=-4;
+polll.position.x=6;
+ringof.position.x=5.4;
+ringof.position.y=1;
+ground.position.y=-2.5;
+
+<span class="kw">let</span> velocity = 0;
+<span class="kw">let</span> gravity = -0.001;
+<span class="kw">let</span> groundY = -2.7;
+<span class="kw">let</span> score=0;  
+<span class="kw">let</span> isColliding = <span class="kw">false</span>;
+
+<span class="kw">function</span> animate( time ) {
+ <span class="kw">let</span> oldPosition = basketball.position.clone();
+   velocity += gravity;
+    basketball.position.y += velocity;
+     <span class="kw">if</span> (keys.ArrowUp) basketball.position.y += movSpeed;
+    <span class="kw">if</span> (keys.ArrowDown) basketball.position.y -= movSpeed;
+    <span class="kw">if</span> (keys.ArrowRight) basketball.position.x += movSpeed;
+    <span class="kw">if</span> (keys.ArrowLeft) basketball.position.x -= movSpeed;
+
+    playerSphere.set(basketball.position, 0.2);
+    wallBox.setFromObject(ringof);
+    <span class="kw">if</span> (playerSphere.intersectsBox(wallBox)) {
+    
+      basketball.position.copy(oldPosition);
+      <span class="kw">if</span> (!isColliding) {
+        score++;
+        document.getElementById(<span class="string">"touch"</span>).innerHTML = score;
+        isColliding = <span class="kw">true</span>;
+      }
+}
+<span class="kw">else</span> {
+    isColliding = <span class="kw">false</span>;
+}
+
+    <span class="comment">// Check if box touches ground</span>
+    <span class="kw">if</span> (basketball.position.y &lt;= groundY + 0.5) {
+        basketball.position.y = groundY + 0.5;
+        velocity = -velocity * 0.9;
+    }
+
+
+  renderer.render( scene, camera );
+
+}</code></pre>
+      </section>
+      <section class="doc-section" id="creating-cube">
+        <h4>Creating cube</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 5, 9);
+camera.lookAt(0, 0, 0);
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="kw">const</span> ui = document.getElementById(<span class="string">"ui"</span>);
+
+<span class="kw">const</span> colors = [<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>, <span class="string">"yellow"</span>, <span class="string">"orange"</span>];
+<span class="kw">const</span> targetColor = colors[Math.floor(Math.random() * colors.length)];
+
+<span class="kw">const</span> target = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: targetColor })
+);
+target.position.y = 2;
+scene.add(target);
+
+<span class="kw">let</span> cubes = [];
+
+<span class="kw">for</span> (<span class="kw">let</span> i = 0; i &lt; 3; i++) {
+    <span class="kw">const</span> color = colors[Math.floor(Math.random() * colors.length)];
+
+    <span class="kw">const</span> cube = <span class="kw">new</span> THREE.Mesh(
+        <span class="kw">new</span> THREE.BoxGeometry(),
+        <span class="kw">new</span> THREE.MeshBasicMaterial({ color })
+    );
+
+    cube.position.x = (i - 1) * 2;
+    scene.add(cube);
+    cubes.push(cube);
+}
+
+<span class="kw">const</span> raycaster = <span class="kw">new</span> THREE.Raycaster();
+<span class="kw">const</span> mouse = <span class="kw">new</span> THREE.Vector2();
+
+<span class="kw">let</span> startTime = performance.now();
+<span class="kw">let</span> won = <span class="kw">false</span>;
+
+renderer.domElement.addEventListener(<span class="string">"click"</span>, <span class="kw">function</span>(e) {
+    <span class="kw">if</span> (won) <span class="kw">return</span>;
+
+    mouse.x = (e.clientX / innerWidth) * 2 - 1;
+    mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+
+    <span class="kw">const</span> hits = raycaster.intersectObjects(cubes);
+
+    <span class="kw">if</span> (hits.length &gt; 0) {
+        hits[0].object.material.color.set(targetColor);
+    }
+
+    won = cubes.every(cube =&gt;
+        cube.material.color.getHex() === target.material.color.getHex()
+    );
+});
+
+<span class="kw">function</span> animate() {
+    requestAnimationFrame(animate);
+
+    <span class="kw">const</span> time = ((performance.now() - startTime) / 1000).toFixed(1);
+
+    ui.innerHTML = <span class="string">`
+        Target: ${targetColor}&lt;br&gt;
+        Time: ${time} seconds&lt;br&gt;
+        ${won ? "You Win!" : "Click the cubes to match the color"}
+    `</span>;
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+});</code></pre>
+      </section>
+      <section class="doc-section" id="doc-animation">
+        <h4>Animation</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+window.startGame = <span class="kw">function</span>() {
+    document.getElementById(<span class="string">"startScreen"</span>).style.display = <span class="string">"none"</span>;
+
+    renderer.domElement.requestPointerLock();
+
+};
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(0x87ceeb); <span class="comment">// Sky blue</span>
+<span class="comment">//scene.fog = new THREE.Fog(0x87ceeb, 15, 45)</span>
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(
+  75, window.innerWidth / window.innerHeight, 0.1, 100
+);
+camera.position.set(0, 1.7, 6); <span class="comment">// Player eye position</span>
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = <span class="kw">true</span>;
+document.body.appendChild(renderer.domElement);
+renderer.domElement.id = <span class="string">"game"</span>;
+<span class="comment">// 2. LIGHTS</span>
+<span class="kw">const</span> sunlight = <span class="kw">new</span> THREE.DirectionalLight(0xffffff, 2);
+sunlight.position.set(-5, 10, 7);
+sunlight.castShadow = <span class="kw">true</span>;
+scene.add(sunlight);
+<span class="kw">const</span> ambientLight = <span class="kw">new</span> THREE.AmbientLight(0xffffff, 0.65);
+scene.add(ambientLight);
+<span class="comment">// 3. FLOOR AND SIMPLE SURROUNDINGS</span>
+<span class="kw">const</span> floor = <span class="kw">new</span> THREE.Mesh(
+  <span class="kw">new</span> THREE.PlaneGeometry(100, 100),
+  <span class="kw">new</span> THREE.MeshStandardMaterial({ color: 0x579447 })
+);
+floor.rotation.x = -Math.PI / 2;
+floor.position.y = 0;
+floor.receiveShadow = <span class="kw">true</span>;
+scene.add(floor);
+
+<span class="comment">// A few simple blocks make the scene look like a target range.</span>
+<span class="kw">const</span> wallMaterial = <span class="kw">new</span> THREE.MeshStandardMaterial({ color: 0x9b7653 });
+<span class="kw">const</span> backWall = <span class="kw">new</span> THREE.Mesh(
+  <span class="kw">new</span> THREE.BoxGeometry(22, 5, 0.5),
+  wallMaterial
+);
+backWall.position.set(0, 2.5, -12);
+scene.add(backWall);
+
+<span class="comment">// ----------------------------------------------------</span>
+<span class="comment">// 4. CREATE THE THREE TARGET SPHERES</span>
+<span class="comment">// ----------------------------------------------------</span>
+
+<span class="kw">const</span> targets = [];
+<span class="kw">const</span> targetPositions = [
+  <span class="kw">new</span> THREE.Vector3(-3, 2, -8),
+  <span class="kw">new</span> THREE.Vector3(0, 2.5, -10),
+  <span class="kw">new</span> THREE.Vector3(3, 2, -8)
+];
+<span class="kw">function</span> createTargets() {
+  <span class="comment">// Remove old targets before creating new ones.</span>
+  <span class="kw">for</span> (<span class="kw">const</span> target <span class="kw">of</span> targets) {
+    scene.remove(target);
+    target.geometry.dispose();
+    target.material.dispose();
+  }
+  targets.length = 0;
+  <span class="kw">const</span> colors = [0xff3333, 0xffd000, 0x258cff];
+  <span class="kw">for</span> (<span class="kw">let</span> i = 0; i &lt; 3; i++) {
+    <span class="kw">const</span> geometry = <span class="kw">new</span> THREE.SphereGeometry(0.65, 32, 32);
+    <span class="kw">const</span> material = <span class="kw">new</span> THREE.MeshStandardMaterial({
+      color: colors[i],
+      roughness: 0.35,
+      metalness: 0.1
+    });
+    <span class="kw">const</span> sphere = <span class="kw">new</span> THREE.Mesh(geometry, material);
+    sphere.position.copy(targetPositions[i]);
+    sphere.castShadow = <span class="kw">true</span>;
+    sphere.userData.isTarget = <span class="kw">true</span>;
+
+    scene.add(sphere);
+    targets.push(sphere);
+  }
+}
+createTargets();
+<span class="comment">// ----------------------------------------------------</span>
+<span class="comment">// 5. SCORE</span>
+<span class="comment">// ----------------------------------------------------</span>
+<span class="kw">let</span> score = 0;
+<span class="kw">const</span> scoreText = document.getElementById(<span class="string">"score"</span>);
+<span class="kw">const</span> message = document.getElementById(<span class="string">"message"</span>);
+
+<span class="kw">function</span> updateScore() {
+  scoreText.textContent = score;
+}
+<span class="comment">// ----------------------------------------------------</span>
+<span class="comment">// 6. RAYCASTER: SHOOT FROM THE CENTRE OF THE CAMERA</span>
+<span class="comment">// ----------------------------------------------------</span>
+<span class="kw">const</span> raycaster = <span class="kw">new</span> THREE.Raycaster();
+<span class="kw">const</span> screenCentre = <span class="kw">new</span> THREE.Vector2(0, 0);
+<span class="kw">function</span> shoot() {
+  <span class="comment">// Make a ray starting from the centre of the camera.</span>
+  raycaster.setFromCamera(screenCentre, camera);
+  <span class="comment">// Check whether the ray touches any target sphere.</span>
+  <span class="kw">const</span> hits = raycaster.intersectObjects(targets);
+  <span class="kw">if</span> (hits.length &gt; 0) {
+    <span class="kw">const</span> hitTarget = hits[0].object;
+    <span class="comment">// Remove the hit target from the scene and target list.</span>
+    scene.remove(hitTarget);
+    <span class="kw">const</span> targetIndex = targets.indexOf(hitTarget);
+    <span class="kw">if</span> (targetIndex !== -1) targets.splice(targetIndex, 1);
+    hitTarget.geometry.dispose();
+    hitTarget.material.dispose();
+    <span class="comment">// Increase score and play the hit sound.</span>
+    score++;
+    updateScore();
+    playHitSound();
+    <span class="kw">if</span> (score === 3) {
+      message.textContent = <span class="string">"Great job! You hit all 3 targets. Press Reset to play again."</span>;
+      message.style.display = <span class="string">"block"</span>;
+    } <span class="kw">else</span> {
+      message.textContent = <span class="string">"Target hit!"</span>;
+      message.style.display = <span class="string">"block"</span>;
+      setTimeout(() =&gt; {
+        <span class="kw">if</span> (score &lt; 3 &amp;&amp; document.pointerLockElement) {
+          message.style.display = <span class="string">"none"</span>;
+        }
+      }, 700);
+    }
+  } <span class="kw">else</span> {
+    <span class="comment">// A miss does not change the score.</span>
+    message.textContent = <span class="string">"Missed! Aim at a target."</span>;
+    message.style.display = <span class="string">"block"</span>;
+    setTimeout(() =&gt; {
+      <span class="kw">if</span> (score &lt; 3 &amp;&amp; document.pointerLockElement) {
+        message.style.display = <span class="string">"none"</span>;
+      }
+    }, 600);
+  }
+}
+<span class="comment">// ----------------------------------------------------</span>
+<span class="comment">// 7. HIT SOUND (CREATED WITH THE BROWSER'S AUDIO API)</span>
+<span class="comment">// ----------------------------------------------------</span>
+<span class="kw">let</span> audioContext;
+
+<span class="kw">function</span> playHitSound() {
+  <span class="comment">// Browsers allow audio after the player interacts with the page.</span>
+  <span class="kw">if</span> (!audioContext) {
+    audioContext = <span class="kw">new</span> (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  <span class="kw">const</span> oscillator = audioContext.createOscillator();
+  <span class="kw">const</span> volume = audioContext.createGain();
+  oscillator.type = <span class="string">"sine"</span>;
+  oscillator.frequency.setValueAtTime(700, audioContext.currentTime);
+  oscillator.frequency.exponentialRampToValueAtTime(
+    350, audioContext.currentTime + 0.15
+  );
+  volume.gain.setValueAtTime(0.25, audioContext.currentTime);
+  volume.gain.exponentialRampToValueAtTime(
+    0.001, audioContext.currentTime + 0.18
+  );
+  oscillator.connect(volume);
+  volume.connect(audioContext.destination);
+
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime + 0.18);
+}
+<span class="comment">// ----------------------------------------------------</span>
+<span class="comment">// 8. MOUSE LOOK AND SHOOTING</span>
+<span class="comment">// ---------------------------------------------------</span>
+<span class="kw">let</span> isLocked = <span class="kw">false</span>;
+<span class="kw">let</span> yaw = 0;   <span class="comment">// Looking left and right</span>
+<span class="kw">let</span> pitch = 0; <span class="comment">// Looking up and down</span>
+renderer.domElement.addEventListener(<span class="string">"click"</span>, () =&gt; {
+  <span class="kw">if</span> (!isLocked) {
+    <span class="comment">// First click locks the mouse so it can control the camera.</span>
+    renderer.domElement.requestPointerLock();
+  } <span class="kw">else</span> {
+    <span class="comment">// Further clicks shoot.</span>
+    shoot();
+  }
+});
+document.addEventListener(<span class="string">"pointerlockchange"</span>, () =&gt; {
+  isLocked = document.pointerLockElement === renderer.domElement;
+
+  <span class="kw">if</span> (isLocked) {
+    message.style.display = <span class="string">"none"</span>;
+  } <span class="kw">else</span> <span class="kw">if</span> (score &lt; 3) {
+    message.textContent = <span class="string">"Click the game to continue"</span>;
+    message.style.display = <span class="string">"block"</span>;
+  }
+});
+document.addEventListener(<span class="string">"mousemove"</span>, (event) =&gt; {
+  <span class="kw">if</span> (!isLocked) <span class="kw">return</span>;
+  <span class="kw">const</span> sensitivity = 0.002;
+  yaw -= event.movementX * sensitivity;
+  pitch -= event.movementY * sensitivity;
+  <span class="comment">// Stop the camera from looking completely upside down.</span>
+  pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, pitch));
+  camera.rotation.order = <span class="string">"YXZ"</span>;
+  camera.rotation.y = yaw;
+  camera.rotation.x = pitch;
+});
+<span class="comment">// ----------------------------------------------------</span>
+<span class="comment">// 9. KEYBOARD MOVEMENT (W, A, S, D)</span>
+<span class="comment">// ----------------------------------------------------</span>
+
+<span class="kw">const</span> keys = {};
+
+document.addEventListener(<span class="string">"keydown"</span>, (event) =&gt; {
+  keys[event.key.toLowerCase()] = <span class="kw">true</span>;
+});
+
+document.addEventListener(<span class="string">"keyup"</span>, (event) =&gt; {
+  keys[event.key.toLowerCase()] = <span class="kw">false</span>;
+});
+
+<span class="kw">function</span> movePlayer() {
+  <span class="kw">if</span> (!isLocked) <span class="kw">return</span>;
+
+  <span class="kw">const</span> moveSpeed = 0.09;
+
+  <span class="comment">// Forward and right directions based on the camera's current angle.</span>
+  <span class="kw">const</span> forward = <span class="kw">new</span> THREE.Vector3();
+  camera.getWorldDirection(forward);
+  forward.y = 0;
+  forward.normalize();
+
+  <span class="kw">const</span> right = <span class="kw">new</span> THREE.Vector3();
+  right.crossVectors(forward, camera.up).normalize();
+
+  <span class="kw">if</span> (keys[<span class="string">"w"</span>]) camera.position.addScaledVector(forward, moveSpeed);
+  <span class="kw">if</span> (keys[<span class="string">"s"</span>]) camera.position.addScaledVector(forward, -moveSpeed);
+  <span class="kw">if</span> (keys[<span class="string">"d"</span>]) camera.position.addScaledVector(right, moveSpeed);
+  <span class="kw">if</span> (keys[<span class="string">"a"</span>]) camera.position.addScaledVector(right, -moveSpeed);
+
+  <span class="comment">// Keep the player's height fixed.</span>
+  camera.position.y = 1.7;
+}
+
+<span class="comment">// ----------------------------------------------------</span>
+<span class="comment">// 10. RESET BUTTON</span>
+<span class="comment">// ----------------------------------------------------</span>
+
+document.getElementById(<span class="string">"resetButton"</span>).addEventListener(<span class="string">"click"</span>, () =&gt; {
+  score = 0;
+  updateScore();
+  createTargets();
+
+  message.textContent = <span class="string">"Targets restored! Click the game to start."</span>;
+  message.style.display = <span class="string">"block"</span>;
+});
+
+<span class="comment">// ----------------------------------------------------</span>
+<span class="comment">// 11. RESIZE THE GAME WHEN THE WINDOW SIZE CHANGES</span>
+<span class="comment">// ----------------------------------------------------</span>
+
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+<span class="comment">// ----------------------------------------------------</span>
+<span class="comment">// 12. GAME ANIMATION LOOP</span>
+<span class="comment">// ----------------------------------------------------</span>
+
+<span class="kw">function</span> animate() {
+  requestAnimationFrame(animate);
+
+  movePlayer();
+
+  <span class="comment">// Slowly rotate the targets to make them easier to notice.</span>
+  <span class="kw">for</span> (<span class="kw">const</span> target <span class="kw">of</span> targets) {
+    target.rotation.y += 0.01;
+  }
+
+  renderer.render(scene, camera);
+}
+
+animate();</code></pre>
+      </section>
+      <section class="doc-section" id="light">
+        <h4>Light</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 8, 10);
+camera.lookAt(0, 0, 0);
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="kw">const</span> ui = document.getElementById(<span class="string">"ui"</span>);
+
+<span class="kw">const</span> road = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(12, 0.1, 3),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"gray"</span> })
+);
+scene.add(road);
+
+<span class="kw">const</span> colors = [<span class="string">"red"</span>, <span class="string">"yellow"</span>, <span class="string">"green"</span>];
+<span class="kw">let</span> state = 0;
+<span class="kw">let</span> manual = <span class="kw">false</span>;
+<span class="kw">let</span> timer = 0;
+
+<span class="kw">const</span> lights = colors.map((color, i) =&gt; {
+    <span class="kw">const</span> bulb = <span class="kw">new</span> THREE.Mesh(
+        <span class="kw">new</span> THREE.SphereGeometry(0.25),
+        <span class="kw">new</span> THREE.MeshBasicMaterial({ color })
+    );
+
+    bulb.position.set(-4, 1.2 - i * 0.65, 0);
+    scene.add(bulb);
+    <span class="kw">return</span> bulb;
+});
+
+<span class="kw">function</span> updateLights() {
+    lights.forEach((light, i) =&gt; {
+        light.material.color.set(i === state ? colors[i] : <span class="string">"black"</span>);
+    });
+}
+
+<span class="kw">const</span> modeButton = document.createElement(<span class="string">"button"</span>);
+modeButton.textContent = <span class="string">"Switch Mode"</span>;
+ui.appendChild(modeButton);
+
+<span class="kw">const</span> nextButton = document.createElement(<span class="string">"button"</span>);
+nextButton.textContent = <span class="string">"Next Light"</span>;
+ui.appendChild(nextButton);
+
+modeButton.onclick = () =&gt; {
+    manual = !manual;
+};
+
+nextButton.onclick = () =&gt; {
+    <span class="kw">if</span> (manual) {
+        state = (state + 1) % 3;
+        updateLights();
+    }
+};
+
+<span class="kw">let</span> cars = [];
+
+<span class="kw">for</span> (<span class="kw">let</span> i = 0; i &lt; 3; i++) {
+    <span class="kw">const</span> car = <span class="kw">new</span> THREE.Mesh(
+        <span class="kw">new</span> THREE.BoxGeometry(1, 0.4, 0.5),
+        <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"blue"</span> })
+    );
+
+    car.position.set(-5 - i * 3, 0.3, 0);
+    scene.add(car);
+    cars.push(car);
+}
+
+<span class="kw">function</span> animate() {
+    requestAnimationFrame(animate);
+
+    <span class="kw">if</span> (!manual) {
+        timer++;
+
+        <span class="kw">if</span> (timer &gt;= 120) {
+            state = (state + 1) % 3;
+            timer = 0;
+            updateLights();
+        }
+    }
+
+    <span class="kw">if</span> (state === 2) {
+        cars.forEach(car =&gt; {
+            car.position.x += 0.04;
+
+            <span class="kw">if</span> (car.position.x &gt; 7) {
+                car.position.x = -7;
+            }
+        });
+    }
+
+    ui.firstChild.textContent =
+        <span class="string">`Traffic: ${colors[state]} | Mode: ${manual ? "Manual" : "Auto"} `</span>;
+
+    renderer.render(scene, camera);
+}
+
+updateLights();
+animate();
+
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+});</code></pre>
+      </section>
+      <section class="doc-section" id="collection-camera">
+        <h4>Collection camera</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 7, 10);
+camera.lookAt(0, 0, 0);
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="kw">const</span> ui = document.getElementById(<span class="string">"ui"</span>);
+
+<span class="kw">const</span> platform = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(10, 0.3, 5),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"green"</span> })
+);
+platform.position.y = -0.15;
+scene.add(platform);
+
+<span class="kw">const</span> player = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(0.7, 0.7, 0.7),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"blue"</span> })
+);
+player.position.set(-4, 0.35, 0);
+scene.add(player);
+
+<span class="kw">let</span> coin = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.CylinderGeometry(0.25, 0.25, 0.08, 20),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"gold"</span> })
+);
+coin.position.set(2, 0.3, 0);
+scene.add(coin);
+
+<span class="kw">let</span> keys = {};
+<span class="kw">let</span> velocity = 0;
+<span class="kw">let</span> score = 0;
+<span class="kw">let</span> gameOver = <span class="kw">false</span>;
+
+document.addEventListener(<span class="string">"keydown"</span>, e =&gt; {
+    keys[e.key] = <span class="kw">true</span>;
+
+    <span class="kw">if</span> (e.code === <span class="string">"Space"</span> &amp;&amp; player.position.y &lt;= 0.36) {
+        velocity = 0.18;
+    }
+});
+
+document.addEventListener(<span class="string">"keyup"</span>, e =&gt; {
+    keys[e.key] = <span class="kw">false</span>;
+});
+
+<span class="kw">function</span> animate() {
+    requestAnimationFrame(animate);
+
+    <span class="kw">if</span> (!gameOver) {
+        <span class="kw">if</span> (keys.ArrowLeft) player.position.x -= 0.07;
+        <span class="kw">if</span> (keys.ArrowRight) player.position.x += 0.07;
+        <span class="kw">if</span> (keys.ArrowUp) player.position.z -= 0.07;
+        <span class="kw">if</span> (keys.ArrowDown) player.position.z += 0.07;
+
+        velocity -= 0.009;
+        player.position.y += velocity;
+
+        <span class="kw">if</span> (player.position.y &lt; 0.35) {
+            player.position.y = 0.35;
+            velocity = 0;
+        }
+
+        <span class="kw">if</span> (coin &amp;&amp; player.position.distanceTo(coin.position) &lt; 0.65) {
+            scene.remove(coin);
+            coin = <span class="kw">null</span>;
+            score++;
+        }
+
+        <span class="kw">if</span> (Math.abs(player.position.x) &gt; 5 ||
+            Math.abs(player.position.z) &gt; 2.5) {
+            gameOver = <span class="kw">true</span>;
+            ui.textContent = <span class="string">"Try Again!"</span>;
+
+            setTimeout(() =&gt; {
+                player.position.set(-4, 0.35, 0);
+                velocity = 0;
+                gameOver = <span class="kw">false</span>;
+            }, 1000);
+        }
+    }
+
+    <span class="kw">if</span> (!gameOver) {
+        ui.textContent = <span class="string">`Score: ${score} | Arrows to move, Space to jump`</span>;
+    }
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+});</code></pre>
+      </section>
+      <section class="doc-section" id="switch">
+        <h4>Switch()</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 5, 10);
+camera.lookAt(0, 0, 0);
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="kw">const</span> ui = document.getElementById(<span class="string">"ui"</span>);
+
+<span class="kw">const</span> floor = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(6, 0.2, 5),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"gray"</span> })
+);
+floor.position.y = -0.1;
+scene.add(floor);
+
+<span class="kw">function</span> createAppliance(name, x, color) {
+    <span class="kw">const</span> object = <span class="kw">new</span> THREE.Mesh(
+        <span class="kw">new</span> THREE.BoxGeometry(1, 1, 0.5),
+        <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"gray"</span> })
+    );
+
+    object.position.set(x, 0.5, 0);
+    scene.add(object);
+
+    <span class="kw">let</span> isOn = <span class="kw">false</span>;
+
+    <span class="kw">const</span> button = document.createElement(<span class="string">"button"</span>);
+    button.textContent = name + <span class="string">" ON/OFF"</span>;
+    ui.appendChild(button);
+
+    <span class="kw">const</span> status = document.createElement(<span class="string">"div"</span>);
+    ui.appendChild(status);
+
+    button.onclick = () =&gt; {
+        isOn = !isOn;
+        object.material.color.set(isOn ? color : <span class="string">"gray"</span>);
+        status.textContent = name + (isOn ? <span class="string">" ON"</span> : <span class="string">" OFF"</span>);
+    };
+
+    <span class="kw">return</span> { object, getState: () =&gt; isOn };
+}
+
+<span class="kw">const</span> light = createAppliance(<span class="string">"Light"</span>, -2, <span class="string">"yellow"</span>);
+<span class="kw">const</span> fan = createAppliance(<span class="string">"Fan"</span>, 0, <span class="string">"blue"</span>);
+<span class="kw">const</span> tv = createAppliance(<span class="string">"TV"</span>, 2, <span class="string">"purple"</span>);
+
+<span class="kw">const</span> fanBlade = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(1, 0.08, 0.08),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"black"</span> })
+);
+fanBlade.position.set(0, 1.3, 0);
+scene.add(fanBlade);
+
+<span class="kw">function</span> animate() {
+    requestAnimationFrame(animate);
+
+    <span class="kw">if</span> (fan.getState()) {
+        fanBlade.rotation.y += 0.05;
+    }
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+});</code></pre>
+      </section>
+      <section class="doc-section" id="animation-action">
+        <h4>Animation Action</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+    <span class="comment">// --- Scene &amp; Camera Setup ---</span>
+    <span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+    scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+    <span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 5, 9);
+    camera.lookAt(0, 2, 0);
+
+    <span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    document.body.appendChild(renderer.domElement);
+
+    <span class="comment">// --- Lighting ---</span>
+    <span class="kw">const</span> hemiLight = <span class="kw">new</span> THREE.HemisphereLight(0xffffff, 0x444444, 1.2);
+    hemiLight.position.set(0, 10, 0);
+    scene.add(hemiLight);
+
+    <span class="kw">const</span> dirLight = <span class="kw">new</span> THREE.DirectionalLight(0xffffff, 0.8);
+    dirLight.position.set(5, 10, 7);
+    scene.add(dirLight);
+
+    <span class="comment">// --- Environment &amp; Entities ---</span>
+    <span class="kw">const</span> ground = <span class="kw">new</span> THREE.Mesh(
+      <span class="kw">new</span> THREE.BoxGeometry(12, 0.2, 2),
+      <span class="kw">new</span> THREE.MeshLambertMaterial({ color: 0x388e3c })
+    );
+    ground.position.y = -0.1; <span class="comment">// Surface is at y = 0</span>
+    scene.add(ground);
+
+    <span class="kw">const</span> bucketWidth = 1.6;
+    <span class="kw">const</span> bucketHeight = 0.4;
+    <span class="kw">const</span> bucket = <span class="kw">new</span> THREE.Mesh(
+      <span class="kw">new</span> THREE.BoxGeometry(bucketWidth, bucketHeight, 1),
+      <span class="kw">new</span> THREE.MeshLambertMaterial({ color: 0x8d6e63 })
+    );
+    bucket.position.y = bucketHeight / 2; <span class="comment">// Sits exactly on the ground (top at y = 0.4)</span>
+    scene.add(bucket);
+
+    <span class="comment">// Reuse geometries and materials to avoid GPU allocation per spawn</span>
+    <span class="kw">const</span> ballRadius = 0.25;
+    <span class="kw">const</span> ballGeometry = <span class="kw">new</span> THREE.SphereGeometry(ballRadius, 16, 16);
+    <span class="kw">const</span> ballMaterial = <span class="kw">new</span> THREE.MeshStandardMaterial({ color: 0xff9800 });
+
+    <span class="comment">// --- Game State ---</span>
+    <span class="kw">const</span> keys = {};
+    <span class="kw">const</span> balls = [];
+    <span class="kw">let</span> score = 0;
+    <span class="kw">let</span> misses = 0;
+    <span class="kw">const</span> gravity = 9.8;       <span class="comment">// Units per second²</span>
+    <span class="kw">const</span> bucketSpeed = 8.0;   <span class="comment">// Units per second</span>
+    <span class="kw">const</span> ui = document.getElementById(<span class="string">"ui"</span>);
+
+    <span class="kw">function</span> updateUI() {
+      ui.textContent = <span class="string">`Score: ${score} | Misses: ${misses} | Use ← → or A/D to move`</span>;
+    }
+
+    document.addEventListener(<span class="string">"keydown"</span>, (e) =&gt; (keys[e.key] = <span class="kw">true</span>));
+    document.addEventListener(<span class="string">"keyup"</span>, (e) =&gt; (keys[e.key] = <span class="kw">false</span>));
+
+    <span class="kw">function</span> createBall() {
+      <span class="kw">const</span> ballMesh = <span class="kw">new</span> THREE.Mesh(ballGeometry, ballMaterial);
+      ballMesh.position.set((Math.random() - 0.5) * 10, 6, 0);
+      scene.add(ballMesh);
+
+      balls.push({
+        mesh: ballMesh,
+        velocity: 0
+      });
+    }
+
+    <span class="kw">const</span> spawnInterval = setInterval(createBall, 1400);
+
+    <span class="comment">// --- Animation &amp; Physics Loop ---</span>
+    <span class="kw">const</span> clock = <span class="kw">new</span> THREE.Clock();
+
+    <span class="kw">function</span> animate() {
+      requestAnimationFrame(animate);
+
+      <span class="kw">const</span> delta = Math.min(clock.getDelta(), 0.1); <span class="comment">// Cap delta to avoid large jumps on tab switch</span>
+
+      <span class="comment">// Bucket movement (frame-rate independent)</span>
+      <span class="kw">if</span> (keys[<span class="string">"ArrowLeft"</span>] || keys[<span class="string">"a"</span>] || keys[<span class="string">"A"</span>]) {
+        bucket.position.x -= bucketSpeed * delta;
+      }
+      <span class="kw">if</span> (keys[<span class="string">"ArrowRight"</span>] || keys[<span class="string">"d"</span>] || keys[<span class="string">"D"</span>]) {
+        bucket.position.x += bucketSpeed * delta;
+      }
+      bucket.position.x = THREE.MathUtils.clamp(bucket.position.x, -5.2, 5.2);
+
+      <span class="kw">const</span> bucketTopY = bucket.position.y + bucketHeight / 2;
+      <span class="kw">const</span> bucketHalfWidth = bucketWidth / 2;
+
+      <span class="kw">for</span> (<span class="kw">let</span> i = balls.length - 1; i &gt;= 0; i--) {
+        <span class="kw">const</span> ball = balls[i];
+        <span class="kw">const</span> prevY = ball.mesh.position.y;
+
+        ball.velocity += gravity * delta;
+        ball.mesh.position.y -= ball.velocity * delta;
+        <span class="kw">const</span> currY = ball.mesh.position.y;
+
+        <span class="kw">const</span> ballBottomPrev = prevY - ballRadius;
+        <span class="kw">const</span> ballBottomCurr = currY - ballRadius;
+
+        <span class="comment">// Catch check: ball's bottom crossed the bucket's top surface this frame</span>
+        <span class="kw">const</span> crossedBucketTop = ballBottomPrev &gt;= bucketTopY &amp;&amp; ballBottomCurr &lt;= bucketTopY;
+        <span class="kw">const</span> withinBucketX = Math.abs(ball.mesh.position.x - bucket.position.x) &lt;= (bucketHalfWidth + ballRadius * 0.5);
+
+        <span class="kw">if</span> (crossedBucketTop &amp;&amp; withinBucketX) {
+          scene.remove(ball.mesh);
+          balls.splice(i, 1);
+          score++;
+          updateUI();
+          <span class="kw">continue</span>;
+        }
+
+        <span class="comment">// Miss check: ball hit or penetrated the ground (y = 0)</span>
+        <span class="kw">if</span> (ballBottomCurr &lt;= 0) {
+          scene.remove(ball.mesh);
+          balls.splice(i, 1);
+          misses++;
+          updateUI();
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });</code></pre>
+      </section>
+      <section class="doc-section" id="webgl-follower">
+        <h4>WebGL Follower</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 6, 9);
+camera.lookAt(0, 0, 0);
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="kw">const</span> ui = document.getElementById(<span class="string">"ui"</span>);
+
+<span class="kw">const</span> player = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(1, 1, 1),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"blue"</span> })
+);
+player.position.set(-3, 0.5, 0);
+scene.add(player);
+
+<span class="kw">const</span> enemy = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(1, 1, 1),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"red"</span> })
+);
+enemy.position.set(3, 0.5, 0);
+scene.add(enemy);
+
+<span class="kw">let</span> health = 100;
+<span class="kw">let</span> isColliding = <span class="kw">false</span>; <span class="comment">// Prevents continuous multi-hit damage</span>
+<span class="kw">let</span> gameOver = <span class="kw">false</span>;
+<span class="kw">let</span> keys = {};
+
+document.addEventListener(<span class="string">"keydown"</span>, e =&gt; keys[e.key] = <span class="kw">true</span>);
+document.addEventListener(<span class="string">"keyup"</span>, e =&gt; keys[e.key] = <span class="kw">false</span>);
+
+<span class="kw">const</span> healthBar = document.createElement(<span class="string">"div"</span>);
+healthBar.style.width = <span class="string">"200px"</span>;
+healthBar.style.height = <span class="string">"18px"</span>;
+healthBar.style.background = <span class="string">"red"</span>;
+healthBar.style.marginTop = <span class="string">"8px"</span>;
+ui.appendChild(healthBar);
+
+<span class="kw">function</span> animate() {
+    requestAnimationFrame(animate);
+
+    <span class="kw">if</span> (!gameOver) {
+        <span class="comment">// 1. Move Player</span>
+        <span class="kw">if</span> (keys.ArrowLeft) player.position.x -= 0.06;
+        <span class="kw">if</span> (keys.ArrowRight) player.position.x += 0.06;
+        <span class="kw">if</span> (keys.ArrowUp) player.position.z -= 0.06;
+        <span class="kw">if</span> (keys.ArrowDown) player.position.z += 0.06;
+
+        <span class="comment">// 2. Simple calculation of distance on X and Z</span>
+        <span class="kw">const</span> dx = player.position.x - enemy.position.x;
+        <span class="kw">const</span> dz = player.position.z - enemy.position.z;
+        <span class="kw">const</span> distance = Math.sqrt(dx * dx + dz * dz);
+
+        <span class="comment">// Move enemy toward player along X and Z</span>
+        <span class="kw">const</span> enemySpeed = 0.035;
+        <span class="kw">if</span> (distance &gt; 0.05) {
+            enemy.position.x += (dx / distance) * enemySpeed;
+            enemy.position.z += (dz / distance) * enemySpeed;
+        }
+
+        <span class="comment">// 3. Collision check using isColliding</span>
+        <span class="kw">if</span> (distance &lt; 1.0) {
+            <span class="comment">// Triggers only once on first contact</span>
+            <span class="kw">if</span> (!isColliding) {
+                health -= 10;
+                isColliding = <span class="kw">true</span>;
+
+                healthBar.style.width = (health * 2) + <span class="string">"px"</span>;
+                ui.firstChild.textContent = <span class="string">`Health: ${health}/100`</span>;
+
+                <span class="kw">if</span> (health &lt;= 0) {
+                    health = 0;
+                    gameOver = <span class="kw">true</span>;
+                    ui.firstChild.textContent = <span class="string">"Game Over"</span>;
+                }
+            }
+        } <span class="kw">else</span> {
+            <span class="comment">// Reset the flag as soon as player moves away</span>
+            isColliding = <span class="kw">false</span>;
+        }
+    }
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+});</code></pre>
+      </section>
+      <section class="doc-section" id="perspective-path-finder">
+        <h4>Perspective path finder</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+<span class="comment">// Camera looking straight down the Z-axis at the X-Y plane</span>
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0, 11);
+camera.lookAt(0, 0, 0);
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="kw">const</span> ui = document.getElementById(<span class="string">"ui"</span>);
+
+<span class="kw">let</span> walls = [];
+
+<span class="comment">// Accepts position and custom width/height (defaults to 1x1)</span>
+<span class="kw">function</span> createWall(x, y, w = 1, h = 1, color = <span class="string">"gray"</span>) {
+    <span class="kw">const</span> wall = <span class="kw">new</span> THREE.Mesh(
+        <span class="kw">new</span> THREE.BoxGeometry(w, h, 0.2),
+        <span class="kw">new</span> THREE.MeshBasicMaterial({ color: color })
+    );
+
+    wall.position.set(x, y, 0);
+    wall.userData = { halfW: w / 2, halfH: h / 2 };
+    scene.add(wall);
+    walls.push(wall);
+}
+
+<span class="comment">// --- Outer Bounding Box (Arena Boundaries) ---</span>
+<span class="kw">const</span> arenaSize = 8;        <span class="comment">// Encloses the area from -4 to +4 on both X and Y</span>
+<span class="kw">const</span> thickness = 0.4;
+<span class="kw">const</span> boundaryOffset = arenaSize / 2 + thickness / 2;
+
+createWall(0, boundaryOffset, arenaSize + thickness * 2, thickness, <span class="string">"darkslategray"</span>); <span class="comment">// Top Wall</span>
+createWall(0, -boundaryOffset, arenaSize + thickness * 2, thickness, <span class="string">"darkslategray"</span>); <span class="comment">// Bottom Wall</span>
+createWall(-boundaryOffset, 0, thickness, arenaSize, <span class="string">"darkslategray"</span>);                  <span class="comment">// Left Wall</span>
+createWall(boundaryOffset, 0, thickness, arenaSize, <span class="string">"darkslategray"</span>);                   <span class="comment">// Right Wall</span>
+
+<span class="comment">// --- Inner Maze Walls ---</span>
+[
+    [-2, 0], [-1, 0], [0, 0], [1, 0], [2, 0],
+    [0, -2], [0, -1], [2, 1], [-2, 2]
+].forEach(p =&gt; {
+    createWall(p[0], p[1]);
+});
+
+<span class="comment">// Ball (player)</span>
+<span class="kw">const</span> ballRadius = 0.3;
+<span class="kw">const</span> ball = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.CircleGeometry(ballRadius, 32),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"blue"</span> })
+);
+ball.position.set(-3, -3, 0);
+scene.add(ball);
+
+<span class="comment">// Goal</span>
+<span class="kw">const</span> goal = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.PlaneGeometry(0.7, 0.7),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"gold"</span> })
+);
+goal.position.set(3, 3, 0);
+scene.add(goal);
+
+<span class="kw">let</span> keys = {};
+<span class="kw">let</span> solved = <span class="kw">false</span>;
+<span class="kw">const</span> speed = 0.06;
+
+document.addEventListener(<span class="string">"keydown"</span>, e =&gt; keys[e.key] = <span class="kw">true</span>);
+document.addEventListener(<span class="string">"keyup"</span>, e =&gt; keys[e.key] = <span class="kw">false</span>);
+
+<span class="kw">function</span> animate() {
+    requestAnimationFrame(animate);
+
+    <span class="kw">if</span> (!solved) {
+        <span class="kw">const</span> prevX = ball.position.x;
+        <span class="kw">const</span> prevY = ball.position.y;
+
+        <span class="comment">// Player movement</span>
+        <span class="kw">if</span> (keys.ArrowUp) ball.position.y += speed;
+        <span class="kw">if</span> (keys.ArrowDown) ball.position.y -= speed;
+        <span class="kw">if</span> (keys.ArrowLeft) ball.position.x -= speed;
+        <span class="kw">if</span> (keys.ArrowRight) ball.position.x += speed;
+
+        <span class="comment">// 2D Circle-to-AABB collision check against all inner and outer walls</span>
+        <span class="kw">let</span> collision = <span class="kw">false</span>;
+
+        <span class="kw">for</span> (<span class="kw">let</span> i = 0; i &lt; walls.length; i++) {
+            <span class="kw">const</span> wall = walls[i];
+            <span class="kw">const</span> halfW = wall.userData.halfW;
+            <span class="kw">const</span> halfH = wall.userData.halfH;
+
+            <span class="comment">// Find closest point on the wall rectangle to the ball center</span>
+            <span class="kw">const</span> closestX = Math.max(wall.position.x - halfW, Math.min(ball.position.x, wall.position.x + halfW));
+            <span class="kw">const</span> closestY = Math.max(wall.position.y - halfH, Math.min(ball.position.y, wall.position.y + halfH));
+
+            <span class="kw">const</span> dx = ball.position.x - closestX;
+            <span class="kw">const</span> dy = ball.position.y - closestY;
+
+            <span class="kw">if</span> (dx * dx + dy * dy &lt; ballRadius * ballRadius) {
+                collision = <span class="kw">true</span>;
+                <span class="kw">break</span>;
+            }
+        }
+
+        <span class="kw">if</span> (collision) {
+            <span class="comment">// Revert movement if hitting maze walls or the bounding box</span>
+            ball.position.x = prevX;
+            ball.position.y = prevY;
+            ui.textContent = <span class="string">"Wall Hit!"</span>;
+        } <span class="kw">else</span> {
+            <span class="comment">// Check distance to goal in 2D</span>
+            <span class="kw">const</span> gx = ball.position.x - goal.position.x;
+            <span class="kw">const</span> gy = ball.position.y - goal.position.y;
+            <span class="kw">const</span> distToGoal = Math.sqrt(gx * gx + gy * gy);
+
+            <span class="kw">if</span> (distToGoal &lt; 0.55) {
+                solved = <span class="kw">true</span>;
+                ui.textContent = <span class="string">"Maze Solved!"</span>;
+            } <span class="kw">else</span> {
+                ui.textContent = <span class="string">"Move the circle to the goal"</span>;
+            }
+        }
+    }
+
+    renderer.render(scene, camera);
+}
+
+animate();
+
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+});</code></pre>
+      </section>
+      <section class="doc-section" id="2d-runner">
+        <h4>2D runner</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+<span class="comment">// Camera looking straight down the Z-axis at the X-Y plane</span>
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 0, 10);
+camera.lookAt(0, 0, 0);
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="kw">const</span> ui = document.getElementById(<span class="string">"ui"</span>);
+
+<span class="comment">// --- Screen &amp; Arena Bounds ---</span>
+<span class="kw">const</span> arenaWidth = 14;
+<span class="kw">const</span> arenaHeight = 8;
+<span class="kw">const</span> topY = arenaHeight / 2;       <span class="comment">// +4</span>
+<span class="kw">const</span> bottomY = -arenaHeight / 2;   <span class="comment">// -4</span>
+
+<span class="kw">let</span> obstacles = [];
+
+<span class="kw">function</span> createObstacle(x, y, w, h, color = <span class="string">"orange"</span>) {
+    <span class="kw">const</span> mesh = <span class="kw">new</span> THREE.Mesh(
+        <span class="kw">new</span> THREE.BoxGeometry(w, h, 0.2),
+        <span class="kw">new</span> THREE.MeshBasicMaterial({ color: color })
+    );
+    mesh.position.set(x, y, 0);
+    mesh.userData = { halfW: w / 2, halfH: h / 2 };
+    scene.add(mesh);
+    obstacles.push(mesh);
+}
+
+<span class="comment">// Outer boundary walls (ceiling and floor)</span>
+<span class="kw">const</span> wallThickness = 0.4;
+createObstacle(0, topY + wallThickness / 2, arenaWidth, wallThickness, <span class="string">"darkslategray"</span>);
+createObstacle(0, bottomY - wallThickness / 2, arenaWidth, wallThickness, <span class="string">"darkslategray"</span>);
+
+<span class="comment">// --- Top &amp; Bottom Rectangular Blocking Pillars ---</span>
+<span class="comment">// Each column defines: [x_position, width, top_height, bottom_height]</span>
+<span class="kw">const</span> columnPillars = [
+    { x: -3.5, width: 0.8, topH: 3.2, bottomH: 2.2 },
+    { x: -1.5, width: 0.8, topH: 2.0, bottomH: 3.5 },
+    { x:  0.5, width: 0.8, topH: 3.6, bottomH: 1.8 },
+    { x:  2.5, width: 0.8, topH: 1.8, bottomH: 3.8 },
+    { x:  4.5, width: 0.8, topH: 3.0, bottomH: 2.5 }
+];
+
+columnPillars.forEach(col =&gt; {
+    <span class="comment">// Top obstacle hanging downward from the ceiling</span>
+    <span class="kw">const</span> topCenterY = topY - col.topH / 2;
+    createObstacle(col.x, topCenterY, col.width, col.topH, <span class="string">"#e65100"</span>);
+
+    <span class="comment">// Bottom obstacle rising upward from the floor</span>
+    <span class="kw">const</span> bottomCenterY = bottomY + col.bottomH / 2;
+    createObstacle(col.x, bottomCenterY, col.width, col.bottomH, <span class="string">"#f57c00"</span>);
+});
+
+<span class="comment">// Goal on the right side</span>
+<span class="kw">const</span> goal = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.PlaneGeometry(0.6, 1.4),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"gold"</span> })
+);
+goal.position.set(6, 0, 0);
+scene.add(goal);
+
+<span class="comment">// Player (Circle in 2D X-Y)</span>
+<span class="kw">const</span> ballRadius = 0.28;
+<span class="kw">const</span> ball = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.CircleGeometry(ballRadius, 32),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"blue"</span> })
+);
+ball.position.set(-6, 0, 0);
+scene.add(ball);
+
+<span class="comment">// --- Controls &amp; State ---</span>
+<span class="kw">let</span> keys = {};
+<span class="kw">let</span> collisions = 0;
+<span class="kw">let</span> isColliding = <span class="kw">false</span>;
+<span class="kw">let</span> gameOver = <span class="kw">false</span>;
+<span class="kw">const</span> speed = 0.07;
+
+document.addEventListener(<span class="string">"keydown"</span>, e =&gt; keys[e.key] = <span class="kw">true</span>);
+document.addEventListener(<span class="string">"keyup"</span>, e =&gt; keys[e.key] = <span class="kw">false</span>);
+
+<span class="kw">function</span> animate() {
+    requestAnimationFrame(animate);
+
+    <span class="kw">if</span> (!gameOver) {
+        <span class="kw">const</span> prevX = ball.position.x;
+        <span class="kw">const</span> prevY = ball.position.y;
+
+        <span class="comment">// 2D Movement using Arrow keys</span>
+        <span class="kw">if</span> (keys.ArrowUp) ball.position.y += speed;
+        <span class="kw">if</span> (keys.ArrowDown) ball.position.y -= speed;
+        <span class="kw">if</span> (keys.ArrowLeft) ball.position.x -= speed;
+        <span class="kw">if</span> (keys.ArrowRight) ball.position.x += speed;
+
+        <span class="comment">// Keep ball inside left/right screen bounds</span>
+        ball.position.x = Math.max(-6.5, Math.min(6.5, ball.position.x));
+
+        <span class="comment">// 2D Circle-to-AABB Box Collision Detection</span>
+        <span class="kw">let</span> hitDetected = <span class="kw">false</span>;
+
+        <span class="kw">for</span> (<span class="kw">let</span> i = 0; i &lt; obstacles.length; i++) {
+            <span class="kw">const</span> obs = obstacles[i];
+            <span class="kw">const</span> halfW = obs.userData.halfW;
+            <span class="kw">const</span> halfH = obs.userData.halfH;
+
+            <span class="comment">// Nearest point on obstacle box to the ball center</span>
+            <span class="kw">const</span> closestX = Math.max(obs.position.x - halfW, Math.min(ball.position.x, obs.position.x + halfW));
+            <span class="kw">const</span> closestY = Math.max(obs.position.y - halfH, Math.min(ball.position.y, obs.position.y + halfH));
+
+            <span class="kw">const</span> dx = ball.position.x - closestX;
+            <span class="kw">const</span> dy = ball.position.y - closestY;
+
+            <span class="kw">if</span> (dx * dx + dy * dy &lt; ballRadius * ballRadius) {
+                hitDetected = <span class="kw">true</span>;
+                <span class="kw">break</span>;
+            }
+        }
+
+        <span class="kw">if</span> (hitDetected) {
+            <span class="comment">// Block ball movement (slide rollback)</span>
+            ball.position.x = prevX;
+            ball.position.y = prevY;
+
+            <span class="comment">// Increment collision tally only on initial contact</span>
+            <span class="kw">if</span> (!isColliding) {
+                collisions++;
+                isColliding = <span class="kw">true</span>;
+                ui.textContent = <span class="string">`Collisions: ${collisions} / 5`</span>;
+
+                <span class="kw">if</span> (collisions &gt;= 5) {
+                    gameOver = <span class="kw">true</span>;
+                    ui.textContent = <span class="string">"Too Many Collisions - Game Over!"</span>;
+                }
+            }
+        } <span class="kw">else</span> {
+            isColliding = <span class="kw">false</span>;
+
+            <span class="comment">// Check goal reach</span>
+            <span class="kw">const</span> gx = ball.position.x - goal.position.x;
+            <span class="kw">const</span> gy = ball.position.y - goal.position.y;
+            <span class="kw">if</span> (Math.sqrt(gx * gx + gy * gy) &lt; 0.6) {
+                gameOver = <span class="kw">true</span>;
+                ui.textContent = <span class="string">"Goal Reached! You Win!"</span>;
+            }
+        }
+    }
+
+    renderer.render(scene, camera);
+}
+
+ui.textContent = <span class="string">"Collisions: 0 / 5 | Use Arrow keys to navigate"</span>;
+animate();
+
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+});</code></pre>
+      </section>
+      <section class="doc-section" id="hidden">
+        <h4>hidden</h4>
+        <pre class="code-block"><code><span class="kw">import</span> * <span class="kw">as</span> THREE <span class="kw">from</span> <span class="string">"three"</span>;
+
+<span class="kw">const</span> scene = <span class="kw">new</span> THREE.Scene();
+scene.background = <span class="kw">new</span> THREE.Color(<span class="string">"lightblue"</span>);
+
+<span class="kw">const</span> camera = <span class="kw">new</span> THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 100);
+camera.position.set(0, 6, 10);
+camera.lookAt(0, 0, 0);
+
+<span class="kw">const</span> renderer = <span class="kw">new</span> THREE.WebGLRenderer({ antialias: <span class="kw">true</span> });
+renderer.setSize(innerWidth, innerHeight);
+document.body.appendChild(renderer.domElement);
+
+<span class="kw">const</span> ui = document.getElementById(<span class="string">"ui"</span>);
+
+<span class="comment">// Player cube</span>
+<span class="kw">const</span> player = <span class="kw">new</span> THREE.Mesh(
+    <span class="kw">new</span> THREE.BoxGeometry(0.6, 0.6, 0.6),
+    <span class="kw">new</span> THREE.MeshBasicMaterial({ color: <span class="string">"blue"</span> })
+);
+
+player.position.set(-5, 0.3, 0);
+scene.add(player);
+
+<span class="comment">// Three trigger zones</span>
+<span class="kw">const</span> zones = [];
+
+<span class="kw">const</span> colors = [<span class="string">"green"</span>, <span class="string">"yellow"</span>, <span class="string">"red"</span>];
+
+<span class="kw">for</span> (<span class="kw">let</span> i = 0; i &lt; 3; i++) {
+    <span class="kw">const</span> zone = <span class="kw">new</span> THREE.Mesh(
+        <span class="kw">new</span> THREE.BoxGeometry(2, 1, 2),
+        <span class="kw">new</span> THREE.MeshBasicMaterial({
+            color: colors[i],
+            transparent: <span class="kw">true</span>,
+            opacity: 0.18
+        })
+    );
+
+    zone.position.set(-3 + i * 3, 0, 0);
+    scene.add(zone);
+    zones.push(zone);
+}
+
+<span class="kw">let</span> keys = {};
+<span class="kw">let</span> visited = <span class="kw">new</span> Set();
+
+document.addEventListener(<span class="string">"keydown"</span>, e =&gt; keys[e.key] = <span class="kw">true</span>);
+document.addEventListener(<span class="string">"keyup"</span>, e =&gt; keys[e.key] = <span class="kw">false</span>);
+
+<span class="kw">const</span> messages = [
+    <span class="string">"Level Start"</span>,
+    <span class="string">"Halfway Done"</span>,
+    <span class="string">"Path Completed"</span>
+];
+
+<span class="kw">function</span> animate() {
+    requestAnimationFrame(animate);
+
+    <span class="kw">if</span> (keys.ArrowLeft) player.position.x -= 0.06;
+    <span class="kw">if</span> (keys.ArrowRight) player.position.x += 0.06;
+    <span class="kw">if</span> (keys.ArrowUp) player.position.z -= 0.06;
+    <span class="kw">if</span> (keys.ArrowDown) player.position.z += 0.06;
+
+    zones.forEach((zone, i) =&gt; {
+        <span class="kw">const</span> playerBox = <span class="kw">new</span> THREE.Box3().setFromObject(player);
+        <span class="kw">const</span> zoneBox = <span class="kw">new</span> THREE.Box3().setFromObject(zone);
+
+        <span class="kw">if</span> (!visited.has(i) &amp;&amp; playerBox.intersectsBox(zoneBox)) {
+            visited.add(i);
+            ui.textContent = messages[i];
+        }
+    });
+
+    renderer.render(scene, camera);
+}
+
+ui.textContent = <span class="string">"Move the cube using arrow keys"</span>;
+animate();
+
+window.addEventListener(<span class="string">"resize"</span>, () =&gt; {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
 });</code></pre>
       </section>
       <section class="placeholder-section" id="creating-a-scene">
